@@ -142,9 +142,12 @@
             <span>⚙️ Configurer l'Instance (7 Axes & Peuples)</span>
             <span id="modified-axes-count" class="px-1.5 py-0.2 bg-emerald-950 text-emerald-200 rounded-full text-[11px] font-mono">0 écart</span>
           </button>
-
+		  <button onclick="copyContextForGemini(event)" id="btn-copy-gemini" title="Copie le châssis actif + les tuiles filtrées (ou les 2N tuiles en jeu). Shift+Clic = Catalogue complet." class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition flex items-center gap-1.5 border border-indigo-400/50 shadow">
+            <span>✨ Copier contexte Gemini</span>
+          </button>
           <button onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold transition border border-slate-600">
             🖨️ Imprimer Livret PDF
+			
           </button>
         </div>
       </div>
@@ -1611,7 +1614,151 @@
         showToast('JSON invalide', 'Impossible de parser le JSON fourni : ' + err.message);
       }
     }
+// -------------------------------------------------------------------------
+    // 13b. EXPORT CONTEXTUEL CIBLÉ POUR GEMINI
+    // -------------------------------------------------------------------------
+    function getFilteredCatalogueSelection() {
+      const search = (document.getElementById('filter-search').value || '').toLowerCase().trim();
+      const fam = document.getElementById('filter-family').value;
+      const peuple = document.getElementById('filter-peuple').value;
+      const profMode = document.getElementById('filter-profile-letter').value;
+      const scope = document.getElementById('filter-scope').value;
+      const { activeTileIds } = getActiveLisieresAndTiles();
 
+      const isUnfiltered = !search && fam === 'ALL' && peuple === 'ALL' && profMode === 'ALL_COMPARE' && scope === 'ALL';
+      const selected = {};
+      let profileCount = 0;
+
+      Object.keys(CATALOGUE_TUILES).forEach(tileId => {
+        const t = CATALOGUE_TUILES[tileId];
+        const isInCircle = activeTileIds.includes(tileId) || t.famille === 'MIGRATION';
+
+        if (fam !== 'ALL' && t.famille !== fam) return;
+        if (peuple !== 'ALL' && !t.couple.includes(peuple)) return;
+        if (scope === 'IN_CIRCLE_ONLY' && !isInCircle) return;
+
+        const availableLetters = Object.keys(t.profils);
+        const instanceSelectedLetter = t.famille === 'MIGRATION' ? state.slotsInsectes[tileId] : state.profileOverrides[tileId];
+
+        let letters = availableLetters;
+        if (profMode === 'ACTIVE_INSTANCE') {
+          letters = [instanceSelectedLetter];
+        } else if (['A', 'B', 'C', 'D', 'E'].includes(profMode)) {
+          letters = availableLetters.filter(l => l === profMode);
+        }
+
+        letters = letters.filter(letter => {
+          const p = t.profils[letter];
+          const compat = isProfileCompatibleWithChassis(tileId, letter);
+          if (scope === 'COMPATIBLE_ONLY' && !compat.ok) return false;
+          if (scope.startsWith('TAG_')) {
+            const wantedTag = scope.replace('TAG_', '');
+            if (!p.tags || !p.tags.includes(wantedTag)) return false;
+          }
+          if (search) {
+            const hay = `${t.id} ${t.nomBase} ${p.nom} ${p.texte} ${p.primitive} ${(p.tags || []).join(' ')} ${p.temoin}`.toLowerCase();
+            if (!hay.includes(search)) return false;
+          }
+          return true;
+        });
+
+        if (letters.length > 0) {
+          const profilsSubset = {};
+          letters.forEach(l => {
+            profilsSubset[l] = t.profils[l];
+            profileCount++;
+          });
+          selected[tileId] = {
+            id: t.id,
+            famille: t.famille,
+            couple: t.couple,
+            origine: t.origine,
+            nomBase: t.nomBase,
+            profil_actif_instance: instanceSelectedLetter,
+            profils: profilsSubset
+          };
+        }
+      });
+
+      return { isUnfiltered, profileCount, selected };
+    }
+
+    async function copyContextForGemini(event) {
+      const forceFull = event && event.shiftKey;
+      const { lisieres, activeTileIds } = getActiveLisieresAndTiles();
+      let modeLabel = '';
+      let tuilesPayload = {};
+      let countProfiles = 0;
+
+      if (forceFull) {
+        modeLabel = 'CATALOGUE_COMPLET_FORCE';
+        tuilesPayload = CATALOGUE_TUILES;
+        Object.values(CATALOGUE_TUILES).forEach(t => { countProfiles += Object.keys(t.profils).length; });
+      } else if (state.activeTab === 'catalogue') {
+        const filt = getFilteredCatalogueSelection();
+        if (!filt.isUnfiltered) {
+          modeLabel = 'EXPLORATEUR_FILTRE';
+          tuilesPayload = filt.selected;
+          countProfiles = filt.profileCount;
+        }
+      }
+
+      // Par défaut (hors Explorateur filtré), on exporte les 2N tuiles en jeu + les 2 slots de migration
+      if (!modeLabel) {
+        modeLabel = 'INSTANCE_TABLE_ACTIVE_2N';
+        [...activeTileIds, 'SLOT_BUG_CERVEAU', 'SLOT_COLONISATION_GARDIENS'].forEach(id => {
+          const t = CATALOGUE_TUILES[id];
+          if (!t) return;
+          const actLetter = t.famille === 'MIGRATION' ? state.slotsInsectes[id] : (state.profileOverrides[id] || 'A');
+          tuilesPayload[id] = {
+            id: t.id,
+            famille: t.famille,
+            couple: t.couple,
+            nomBase: t.nomBase,
+            profil_actif: actLetter,
+            spec_profil_actif: t.profils[actLetter]
+          };
+          countProfiles++;
+        });
+      }
+
+      const payload = {
+        _meta: {
+          projet: 'Amazonia : Dernier Rempart — Doc Studio',
+          schema_version: '5.3',
+          mode_extraction: modeLabel,
+          workflow_rule: 'Ne jamais réécrire tout le catalogue : fournir uniquement des patchs ciblés (JSON ou script Python incrémental).'
+        },
+        instance: {
+          bundle_id: state.bundleId,
+          config_index_128: computeConfigurationIndex(),
+          peuples_cercle: state.peuplesCercle,
+          topologie: state.chassis.P_Max === 5 ? 'P5_22233' : 'P4_2233',
+          chassis_actif: state.chassis,
+          axes_modifies: getModifiedAxesList().map(a => ({ axe: a.key, val: state.chassis[a.key], defaut: a.defaultVal })),
+          lisieres_actives: lisieres.map(l => `${l.p1}↔${l.p2}: ${l.tuiles.map(id => id + '_' + state.profileOverrides[id]).join(', ')}`)
+        },
+        tuiles_ciblees: tuilesPayload
+      };
+
+      const textToCopy = "```json\n" + JSON.stringify(payload, null, 2) + "\n```";
+
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+      } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = textToCopy;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+
+      const btn = document.getElementById('btn-copy-gemini');
+      const oldHtml = btn.innerHTML;
+      btn.innerHTML = `<span>✓ Copié (${countProfiles} prof.) !</span>`;
+      setTimeout(() => { btn.innerHTML = oldHtml; }, 2200);
+    }
     // -------------------------------------------------------------------------
     // 14. NAVIGATION ENTRE LES 4 ONGLETS & RAFRAÎCHISSEMENT GLOBAL
     // -------------------------------------------------------------------------

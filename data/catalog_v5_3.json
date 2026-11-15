@@ -1,0 +1,37 @@
+{
+  "schema_version": "5.3",
+  "total_emplacements": 32,
+  "total_profils": 100,
+  "topologies": {
+    "P4_2233": {
+      "P_Max": 4,
+      "seuil_imprime_et_dotation": [
+        2,
+        2,
+        3,
+        3
+      ],
+      "arbres_par_joueur": 10
+    },
+    "P5_22233": {
+      "P_Max": 5,
+      "seuil_imprime_et_dotation": [
+        2,
+        2,
+        2,
+        3,
+        3
+      ],
+      "arbres_par_joueur": 12
+    }
+  },
+  "formule_seuil_parade": "max(1, Seuil_Imprime(p) + Offset_Seuil + Rouges - Bleus + Mod_Tactique + Mod_Tuiles)",
+  "verification_fin_de_partie": "FIN_ETAPE_5_3_UNIQUEMENT",
+  "regle_piege": "EXIGE_PRESENCE_LOCALE",
+  "furtivite_4_1_autorise_ciblee_sans_machine": true,
+  "verrouillage_etape_5_parcelles_ciblees": [
+    "INSECTE",
+    "PIEGE"
+  ],
+  "bonus_constructeur_n3": 1
+}

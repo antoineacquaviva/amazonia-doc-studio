@@ -1,1 +1,1 @@
-﻿# Amazonia : Dernier Rempart — Doc Studio
+﻿# Amazonia Doc Studio

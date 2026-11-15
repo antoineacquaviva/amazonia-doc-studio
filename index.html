@@ -406,7 +406,7 @@
         <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200">
           <div>
             <h2 class="text-xl font-bold text-slate-900">Traçabilité & Différentiel des Versions (v4.3 → v4.9 → v5.0 → v5.1 → v5.2 → v5.3)</h2>
-            <p class="text-xs text-slate-500 mt-0.5">Comprenez en un coup d'œil pourquoi et comment chaque règle du châssis ou du catalogue a évolué jusqu'à la v5.2 actuelle.</p>
+            <p class="text-xs text-slate-500 mt-0.5">Comprenez en un coup d'œil pourquoi et comment chaque règle du châssis ou du catalogue a évolué jusqu'à la version actuelle.</p>
           </div>
           <div class="flex items-center gap-2 text-xs">
             <span class="font-semibold text-slate-600">Filtrer le journal :</span>
@@ -1477,16 +1477,31 @@
     // -------------------------------------------------------------------------
     // 12. RENDU DU DIFFÉRENTIEL DE VERSIONS (ONGLET 3)
     // -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
+    // 12. RENDU DU DIFFÉRENTIEL DE VERSIONS (ONGLET 3)
+    // -------------------------------------------------------------------------
+    function syncChangelogSelectOptions() {
+      const sel = document.getElementById('changelog-filter-select');
+      if (!sel || !Array.isArray(VERSION_CHANGELOG) || VERSION_CHANGELOG.length === 0) return;
+      const prev = sel.value || 'ALL';
+      const latest = VERSION_CHANGELOG[0].version;
+      sel.innerHTML = `<option value="ALL">Toutes les évolutions (v4.3 → ${latest})</option>` +
+        VERSION_CHANGELOG.map(b => `<option value="${b.version}">${b.version} — ${b.titre}</option>`).join('');
+      sel.value = Array.from(sel.options).some(o => o.value === prev) ? prev : 'ALL';
+    }
+
     function updateVersionDiffBadge() {
       const v = document.getElementById('diff-version-select').value;
       const filterEl = document.getElementById('changelog-filter-select');
       if (filterEl) {
-        filterEl.value = v === 'v4.3' ? 'ALL' : (v === 'v5.1' ? 'v5.2' : 'ALL');
+        const latest = (VERSION_CHANGELOG[0] && VERSION_CHANGELOG[0].version) || 'v5.3';
+        filterEl.value = v === 'v5.2' ? latest : 'ALL';
         renderChangelogView();
       }
     }
 
     function renderChangelogView() {
+      syncChangelogSelectOptions();
       const filterVal = document.getElementById('changelog-filter-select').value;
       const blocks = VERSION_CHANGELOG.filter(b => filterVal === 'ALL' || b.version === filterVal);
 
@@ -1509,7 +1524,7 @@
                     <div class="font-bold text-[10px] uppercase tracking-wider text-rose-700 mb-1">Avant :</div>${d.avant}
                   </div>
                   <div class="md:col-span-5 p-2.5 rounded-lg bg-emerald-50/80 border border-emerald-200 text-emerald-950 whitespace-pre-line">
-                    <div class="font-bold text-[10px] uppercase tracking-wider text-emerald-700 mb-1">En v5.2 :</div>${d.apres}
+                    <div class="font-bold text-[10px] uppercase tracking-wider text-emerald-700 mb-1">En ${b.version} :</div>${d.apres}
                   </div>
                 </div>
               `).join('')}
@@ -1518,7 +1533,6 @@
         </div>
       `).join('');
     }
-
     // -------------------------------------------------------------------------
     // 13. GÉNÉRATION & IMPORT DU MANIFESTE JSON (ONGLET 4 - SIMULATEUR)
     // -------------------------------------------------------------------------
@@ -1683,17 +1697,46 @@
       return { isUnfiltered, profileCount, selected };
     }
 
+// Socle formel compact des règles v5.3 transmis à chaque nouvelle session Gemini
+    const REGLES_COEUR_SYNTHESE = {
+      but_et_format: "Coopératif asymétrique à communication limitée (3 à 6 joueurs parmi M,R,O,H,E,I · max 8 tours). Objectif unique : maximiser le total d'Arbres debout après la Repousse Finale.",
+      topologie_et_seuils_imprimes: {
+        roue: "N pistes Forêt (rayons p=1 bordure vers p=P_Max centre) alternées avec N pistes Furtivité (lisières X↔Y portant chacune 2 emplacements de Tuiles de Synergie en bordure).",
+        P4_2233: "4 parcelles : arbres initiaux et Seuils Imprimés fixes [2, 2, 3, 3] (10×N arbres). Le seuil ne compte jamais les arbres ni les souches présents.",
+        P5_22233: "5 parcelles : arbres initiaux et Seuils Imprimés fixes [2, 2, 2, 3, 3] (12×N arbres).",
+        mise_en_place: "1 Abatteuse + 1 Bulldozer en p=1 sur chaque rayon (0 Puissance). Paquet = 2N cartes Machine. Piste Tactiques = T1..T6. 2N Tuiles de Synergie face visible (Gardiens double-face sur Face 1)."
+      },
+      sequence_tour_6_etapes: {
+        "1_siege_et_plan": "Machines déjà sur la dernière parcelle non rasée = Siège T4 irréversible (carte posée sur parcelle). Distribution 1 carte/joueur du paquet restant (incl. Sabotages). 2D6 sous paravent : M = min(D1,D2) désigne le rang sur la Piste Tactiques (T1: p mod 0 | T2: p+1 mod 0 | T3: p & p+1 mod -1, avance | T4: p mod -1, +1 Rouge | T5: p+1 mod -1, +1 Rouge | T6: p & p+1 mod -2, avance, +1 Rouge). Aucune Tactique choisie si carte Sabotage ou tuile Rêve au rang M.",
+        "2_defenseurs_muets": "1er Défenseur irrévocable sur sa piste Forêt ou ses 2 lisières adjacentes. Puis 2e Défenseur portée globale (face réflexion puis définitive).",
+        "3_1_construction": "Toute Tuile en lisière avec 2 Défenseurs entre en jeu dès ce tour. Gardien (G) -> case libre autorisée (1..6) ; Rêve (R) -> Rang 6 (éjecte la Tactique la plus à droite, décale les Rêves à gauche). Constructeurs G/R restent en lisière (Bonus N=3 joueurs : 1 des 2 constructeurs rejoint gratuitement p=1 adjacente non rasée). Nid (M) -> parcelle non rasée sans machine d'I ou du partenaire, les 2 constructeurs suivent le Nid en forêt.",
+        "3_2_revelation": "Ouverture simultanée des paravents. Sabotage -> réserve (sauf Loi). Dé M sur un Rêve -> machine annulée, ouvre le Rêve et l'avance r -> r-1 (UNIQUE_PAR_TOUR de gauche à droite, ou cumulatif selon axe).",
+        "4_1_furtivite": "Binôme actif par case Furtivité (2 Défenseurs ou 1 Défenseur + 1 Insecte défaussé, max 1/case/tour) sur les 2 parcelles non rasées en face : Pose 1 Piège si aucune machine physiquement présente (autorisé même si parcelle ciblée à distance en 3.2 ; max 1 Piège/parcelle ; Déclencheur 2) ; Gagne 1 Sabotage si >=1 machine présente et aucune active ce tour (Siège T4 = active ; Déclencheur 3).",
+        "4_2_nids": "Nid avec >=1 Défenseur produit +1 Insecte (si 0-1 présent) ou +2 Insectes (si >=2), allume Déclencheur 6 et résout son effet.",
+        "4_3_migration": "Chaque Insecte bouge d'1 cran (rayon en sautant les Routes Forestières, ou Forêt <-> Furtivité même profondeur). Depuis la dernière parcelle non rasée, migration possible vers Bug du Cerveau ou Colonisation des Gardiens.",
+        "5_attaques_et_verrouillage": "Verrouillage Zéro Dette d'Insectes : dès le début de l'Étape 5 jusqu'à fin 5.3, Insectes et Pièges sur parcelles ciblées ne peuvent ni bouger ni payer de coût. Piège (Embuscade Assistée v5.3) : si Piège + Défense >= 1 à la frappe -> Parade auto (0 Insecte engagé, Déclencheur 1, reste actif pour les frappes suivantes du tour tant que Déf >= 1, retiré en 5.3 ; si Déf = 0, Piège intact). Parade classique : Défense (Défenseurs + Insectes locaux) >= max(1, Seuil_Imprimé(p) + Offset + Rouges - Bleus + Mod_Tactique + Mod_Tuiles). 5.1 Abatteuses : coupent jusqu'à 2 Arbres en Souches. 5.2 Bulldozers : 1 test de parade, coupent jusqu'à 1 Arbre puis retirent toutes les Souches non protégées ; si 0 Arbre et 0 Souche -> Route Forestière (Nid en lisière, Pièges/Insectes défaussés, Défenseurs rendus, machines reculent d'1 parcelle vers la bordure ou glissent vers le centre ; frappes suivantes sur cette cible annulées). 5.3 : Retrait Pièges déclenchés et Insectes engagés en parade classique ; avancée T3/T6 (détruit Nid au contact sauf Loi) ; +1 Rouge sur T4/T5/T6 ; entrée en Siège T4 sur dernière parcelle non rasée.",
+        "5_3_fin_de_partie_unique": "Vérification UNIQUE en toute fin de 5.3 (jamais en 3.x ni 4.x). Si fin du Tour 8, OU Réveil de la Forêt (Gardiens marqués 'utilisé' ce tour >= seuil : 5 à N=6, sinon max(3, min(N, gardiensDispo)) selon axe), OU Sommeil du Contremaître (Rêve au Rang 1) -> sauter l'Étape 6 et passer à la Repousse Finale (1 Souche -> Arbre par parcelle non rasée ayant >=1 Souche, + bonus tuiles).",
+        "6_apprentissage": "6.1 Par machine active pour sa Tactique : +1/parcelle endommagée +1/Puissance rouge acquise en 5.3 -1/jeton bleu Surchauffe sur la machine (plancher 0/machine), puis retraits Bugs/Slots. 6.2 Tactique strictement seule en tête échange avec sa voisine de gauche (r -> r-1), raz jetons. 6.3 Récupération Défenseurs, raz marqueurs Gardiens, mélange paquet (hors Siège T4) + Sabotages."
+      },
+      supports_et_grammaire: {
+        declencheurs_gardiens_6: "1: Parade, 2: Piégeage, 3: Sabotage, 4: Gardien (Résonance), 5: Rêve, 6: Insecte. Max 1 ouverture/tour. Gardien double-face : peut retourner Face 1 -> Face 2 au lieu de résoudre Face 1.",
+        primitives_8: ["MOD_SEUIL", "CREATION_ENTITE", "DEPLACEMENT", "MOD_PUISSANCE", "MOD_APPRENTISSAGE", "PERMUTATION_PISTE", "PARTAGE_INFO_ETAT_GARDIEN", "MOD_LOI_DU_COEUR"]
+      }
+    };
+
     async function copyContextForGemini(event) {
       const forceFull = event && event.shiftKey;
       const { lisieres, activeTileIds } = getActiveLisieresAndTiles();
       let modeLabel = '';
       let tuilesPayload = {};
+      let changelogPayload = undefined;
       let countProfiles = 0;
 
       if (forceFull) {
         modeLabel = 'CATALOGUE_COMPLET_FORCE';
         tuilesPayload = CATALOGUE_TUILES;
         Object.values(CATALOGUE_TUILES).forEach(t => { countProfiles += Object.keys(t.profils).length; });
+        changelogPayload = VERSION_CHANGELOG[0];
       } else if (state.activeTab === 'catalogue') {
         const filt = getFilteredCatalogueSelection();
         if (!filt.isUnfiltered) {
@@ -1701,11 +1744,17 @@
           tuilesPayload = filt.selected;
           countProfiles = filt.profileCount;
         }
+      } else if (state.activeTab === 'changelog') {
+        modeLabel = 'CHANGELOG_ET_INSTANCE_2N';
+        const filterVal = document.getElementById('changelog-filter-select').value;
+        changelogPayload = filterVal === 'ALL'
+          ? VERSION_CHANGELOG.slice(0, 2)
+          : VERSION_CHANGELOG.filter(b => b.version === filterVal);
       }
 
-      // Par défaut (hors Explorateur filtré), on exporte les 2N tuiles en jeu + les 2 slots de migration
-      if (!modeLabel) {
-        modeLabel = 'INSTANCE_TABLE_ACTIVE_2N';
+      // Par défaut (Livret, Spec JSON, Onglet 3, ou Explorateur non filtré) : les 2N tuiles en jeu + 2 migrations
+      if (Object.keys(tuilesPayload).length === 0) {
+        if (!modeLabel) modeLabel = 'INSTANCE_TABLE_ACTIVE_2N';
         [...activeTileIds, 'SLOT_BUG_CERVEAU', 'SLOT_COLONISATION_GARDIENS'].forEach(id => {
           const t = CATALOGUE_TUILES[id];
           if (!t) return;
@@ -1721,6 +1770,50 @@
           countProfiles++;
         });
       }
+
+      const latestVersion = (Array.isArray(VERSION_CHANGELOG) && VERSION_CHANGELOG[0]) ? VERSION_CHANGELOG[0].version : 'v5.3';
+
+      const payload = {
+        _meta: {
+          projet: 'Amazonia : Dernier Rempart — Doc Studio',
+          schema_version: latestVersion.replace(/^v/, ''),
+          mode_extraction: modeLabel,
+          fichiers_source: ['data/amazonia_data_v5_3.js', 'data/catalog_v5_3.json', 'index.html'],
+          workflow_rule: 'Ne jamais réécrire tout le catalogue : fournir uniquement des patchs ciblés (script Python incrémental ou bloc exact).'
+        },
+        regles_coeur: REGLES_COEUR_SYNTHESE,
+        instance: {
+          bundle_id: state.bundleId,
+          config_index_128: computeConfigurationIndex(),
+          peuples_cercle: state.peuplesCercle,
+          topologie: state.chassis.P_Max === 5 ? 'P5_22233' : 'P4_2233',
+          chassis_actif: state.chassis,
+          axes_modifies: getModifiedAxesList().map(a => ({ axe: a.key, val: state.chassis[a.key], defaut: a.defaultVal })),
+          lisieres_actives: lisieres.map(l => `${l.p1}↔${l.p2}: ${l.tuiles.map(id => id + '_' + state.profileOverrides[id]).join(', ')}`)
+        },
+        ...(changelogPayload ? { changelog_extrait: changelogPayload } : {}),
+        tuiles_ciblees: tuilesPayload
+      };
+
+      const textToCopy = "```json\n" + JSON.stringify(payload, null, 2) + "\n```";
+
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+      } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = textToCopy;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+
+      const btn = document.getElementById('btn-copy-gemini');
+      const oldHtml = btn.innerHTML;
+      const suffix = changelogPayload && modeLabel === 'CHANGELOG_ET_INSTANCE_2N' ? `changelog + ${countProfiles} prof.` : `${countProfiles} prof.`;
+      btn.innerHTML = `<span>✓ Copié (${suffix}) !</span>`;
+      setTimeout(() => { btn.innerHTML = oldHtml; }, 2200);
+    }
 
       const payload = {
         _meta: {

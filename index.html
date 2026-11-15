@@ -1815,43 +1815,6 @@
       setTimeout(() => { btn.innerHTML = oldHtml; }, 2200);
     }
 
-      const payload = {
-        _meta: {
-          projet: 'Amazonia : Dernier Rempart — Doc Studio',
-          schema_version: '5.3',
-          mode_extraction: modeLabel,
-          workflow_rule: 'Ne jamais réécrire tout le catalogue : fournir uniquement des patchs ciblés (JSON ou script Python incrémental).'
-        },
-        instance: {
-          bundle_id: state.bundleId,
-          config_index_128: computeConfigurationIndex(),
-          peuples_cercle: state.peuplesCercle,
-          topologie: state.chassis.P_Max === 5 ? 'P5_22233' : 'P4_2233',
-          chassis_actif: state.chassis,
-          axes_modifies: getModifiedAxesList().map(a => ({ axe: a.key, val: state.chassis[a.key], defaut: a.defaultVal })),
-          lisieres_actives: lisieres.map(l => `${l.p1}↔${l.p2}: ${l.tuiles.map(id => id + '_' + state.profileOverrides[id]).join(', ')}`)
-        },
-        tuiles_ciblees: tuilesPayload
-      };
-
-      const textToCopy = "```json\n" + JSON.stringify(payload, null, 2) + "\n```";
-
-      try {
-        await navigator.clipboard.writeText(textToCopy);
-      } catch (e) {
-        const ta = document.createElement('textarea');
-        ta.value = textToCopy;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-      }
-
-      const btn = document.getElementById('btn-copy-gemini');
-      const oldHtml = btn.innerHTML;
-      btn.innerHTML = `<span>✓ Copié (${countProfiles} prof.) !</span>`;
-      setTimeout(() => { btn.innerHTML = oldHtml; }, 2200);
-    }
     // -------------------------------------------------------------------------
     // 14. NAVIGATION ENTRE LES 4 ONGLETS & RAFRAÎCHISSEMENT GLOBAL
     // -------------------------------------------------------------------------

@@ -134,7 +134,7 @@
             nom: 'L’Étreinte de l’Anaconda', cycle: 'DOUBLE_FACE_UPGRADE', cablage: [1,2,3,4,5,6], fenetre: 'OUVERTURE',
             primitive: 'DEPLACEMENT (MACHINE)', tags: ['RECUL'], requires_options: {},
             texte: '<strong>Face 1 :</strong> Faites reculer d’1 parcelle (p → p-1) une machine non en siège située sur une parcelle avec un Défenseur.<br><strong>Face 2 :</strong> Faites reculer d’1 parcelle n’importe quelle machine non en siège.',
-            temoin: 'Saute les Routes Forestières. Ne modifie pas les cibles déjà programmées en 3.2.'
+            temoin: 'Saute les Routes Forestières. Les cibles de la machine se liront depuis sa nouvelle position réelle à l'instant où elle attaque.2.'
           },
           B: {
             nom: 'L’Étreinte de l’Anaconda', cycle: 'DOUBLE_FACE_UPGRADE', cablage: [1,2,3,4,5,6], fenetre: 'LOI 5.3',
@@ -174,7 +174,7 @@
           D: {
             nom: 'Les sentinelles des lianes', cycle: 'SIMPLE_CONTINU', cablage: [1,2,3,4,5,6], fenetre: 'OUVERTURE',
             primitive: 'DEPLACEMENT (FURTIVITE -> PARCELLE_PIEGEE)', tags: ['ARMEMENT', 'FURTIVITE'],
-            requires_options: { Regle_Resolution_Piege: ['EXIGE_PRESENCE_LOCALE'] },
+            requires_options: { Regle_Resolution_Piege: ['exige Défense totale >= 1 (locale ou soutenue à distance)'] },
             texte: 'Vous pouvez déplacer un Défenseur d’une case Furtivité vers une parcelle piégée des Mammifères ou des Oiseaux qui lui fait face.',
             temoin: 'Un binôme a agi en Furtivité face à M p=2 piégée : à l’ouverture, 1 Défenseur rejoint M p=2 pour armer l’Embuscade.'
           },
@@ -193,8 +193,7 @@
           A: {
             nom: 'Le Cri d’Alarme de l’Ara', cycle: 'SACRIFICE_ONESHOT', cablage: [1,2,3,4,5,6], fenetre: 'OUVERTURE / SACRIFICE 3.2',
             primitive: 'MOD_SEUIL / DEPLACEMENT', tags: ['REDEPLOIEMENT'], requires_options: {},
-            texte: '<strong>Face 1 (Ouverture) :</strong> Réduisez de -1 le Seuil de Parade sur une parcelle des rayons O ou M pour le reste du tour.<br><strong>Sacrifice (en 3.2 après révélation) :</strong> Déplacez jusqu’à 2 Défenseurs vers des parcelles ciblées (renvoyez G4 sur sa Face 1 en lisière ; il libère sa case).',
-            temoin: 'Le retour en lisière recompte immédiatement le seuil du Réveil de la Forêt.'
+            texte: '<strong>Face 1 (Ouverture) :</strong> Réduisez de -1 le Seuil de Parade sur une parcelle des rayons O ou M pour le reste du tour.<br><strong>Sacrifice (en 3.2 après révélation) :</strong> Déplacez jusqu’à 2 Défenseurs vers des parcelles ciblées (renvoyez G4 sur sa Face 1 en lisière ; il libère sa case). Le seuil de Réveil reste fixe (calculé à la mise en place) et un Gardien renvoyé en lisière perd son marqueur « utilisé ».'
           },
           B: {
             nom: 'Le Cri d’Alarme de l’Ara', cycle: 'SACRIFICE_ONESHOT', cablage: [1,2,3,4,5,6], fenetre: 'LOI 2.1 / SACRIFICE DÉBUT 2',
@@ -274,7 +273,7 @@
           D: {
             nom: 'Le barrage habité du Capybara', cycle: 'SIMPLE_CONTINU', cablage: [1,2,3,4,5,6], fenetre: 'OUVERTURE',
             primitive: 'CREATION_ENTITE (PIEGE)', tags: ['POSE', 'ARMEMENT'],
-            requires_options: { Regle_Resolution_Piege: ['EXIGE_PRESENCE_LOCALE'] },
+            requires_options: { Regle_Resolution_Piege: ['exige Défense totale >= 1 (locale ou soutenue à distance)'] },
             texte: 'Vous pouvez poser 1 Piège sur une parcelle des Mammifères ou des Humains contenant au moins 1 Défenseur ou 1 Insecte (même avec machine ou ciblage, sans exiger de Souche).',
             temoin: 'Pose un Piège immédiatement armé par la présence locale (un soutien distant seul ne suffit pas pour la pose).'
           },
@@ -351,7 +350,7 @@
           D: {
             nom: 'Les éclaireurs de la Dendrobate', cycle: 'SIMPLE_CONTINU', cablage: [1,2,3,4,5,6], fenetre: 'LOI APRÈS PARADE PIÈGE',
             primitive: 'MOD_LOI_DU_COEUR (LOI_EMBUSCADE_CREE_SENTINELLE)', tags: ['ARMEMENT', 'REACTION', 'INSECTES'],
-            requires_options: { Regle_Resolution_Piege: ['EXIGE_PRESENCE_LOCALE'] },
+            requires_options: { Regle_Resolution_Piege: ['exige Défense totale >= 1 (locale ou soutenue à distance)'] },
             texte: '<strong>Loi :</strong> Une fois par tour, après une Parade par un Piège sur les rayons des Reptiles ou des Entités, vous pouvez créer 1 Insecte sur une <strong>autre</strong> parcelle piégée de ces deux rayons (allume la case 6).',
             temoin: 'Une première Embuscade réussie crée la sentinelle qui arme immédiatement une seconde Embuscade.'
           },
@@ -388,7 +387,7 @@
           D: {
             nom: 'La veille de la Harpie', cycle: 'SIMPLE_CONTINU', cablage: [1,2,3,4,5,6], fenetre: 'LOI 5',
             primitive: 'MOD_LOI_DU_COEUR (LOI_FURTIVITE_ARME_PIEGES)', tags: ['SOUTIEN', 'ARMEMENT', 'FURTIVITE'],
-            requires_options: { Regle_Resolution_Piege: ['EXIGE_PRESENCE_LOCALE'] },
+            requires_options: { Regle_Resolution_Piege: ['exige Défense totale >= 1 (locale ou soutenue à distance)'] },
             texte: '<strong>Loi 5 :</strong> Chaque case Furtivité contenant au moins 1 Défenseur (isolé ou en binôme) fournit au total 1 point de Défense aux parcelles <strong>piégées</strong> des Oiseaux ou des Humains qui lui font face.',
             temoin: 'Permet à un binôme de travailler en Furtivité en 4.1 tout en armant à distance les Pièges en face à l’Étape 5.'
           },
@@ -465,7 +464,7 @@
           D: {
             nom: 'Les porteurs du Téju', cycle: 'SIMPLE_CONTINU', cablage: [1,2,3,4,5,6], fenetre: 'OUVERTURE',
             primitive: 'DEPLACEMENT (INSECTE)', tags: ['ARMEMENT', 'INSECTES'],
-            requires_options: { Regle_Resolution_Piege: ['EXIGE_PRESENCE_LOCALE'] },
+            requires_options: { Regle_Resolution_Piege: ['exige Défense totale >= 1 (locale ou soutenue à distance)'] },
             texte: 'Vous pouvez déplacer 1 Insecte non engagé d’une parcelle des Reptiles ou des Insectes vers une autre parcelle piégée du <strong>même rayon</strong>, à toute distance.',
             temoin: 'Envoie une sentinelle armer un Piège en bout de rayon sans consommer le jeton.'
           },
@@ -578,7 +577,7 @@
           D: {
             nom: 'Le guetteur de pierre', cycle: 'SIMPLE_CONTINU', cablage: null, fenetre: '3.2',
             primitive: 'DEPLACEMENT + CREATION_ENTITE (GROUPE)', tags: ['POSE', 'ARMEMENT', 'FURTIVITE'],
-            requires_options: { Regle_Resolution_Piege: ['EXIGE_PRESENCE_LOCALE'] },
+            requires_options: { Regle_Resolution_Piege: ['exige Défense totale >= 1 (locale ou soutenue à distance)'] },
             texte: 'Vous pouvez déplacer 1 Défenseur d’une case Furtivité vers une parcelle non rasée sans Piège des Humains ou des Reptiles qui lui fait face, et y poser 1 Piège (groupe atomique, allume la case 2).',
             temoin: 'Fournit simultanément le Piège et son Défenseur d’armement avant les cascades de la case 2.'
           },
@@ -615,7 +614,7 @@
           D: {
             nom: 'Le rêve du veilleur', cycle: 'SIMPLE_CONTINU', cablage: null, fenetre: '3.2',
             primitive: 'CREATION_ENTITE (INSECTE)', tags: ['ARMEMENT', 'INSECTES'],
-            requires_options: { Regle_Resolution_Piege: ['EXIGE_PRESENCE_LOCALE'] },
+            requires_options: { Regle_Resolution_Piege: ['exige Défense totale >= 1 (locale ou soutenue à distance)'] },
             texte: 'Vous pouvez créer 1 Insecte sur une parcelle piégée des Humains ou des Oiseaux (allume la case 6).',
             temoin: 'Arme un Piège déjà en place (attention à ne pas faire partir cet Insecte en 4.3 sans relève).'
           },
@@ -652,7 +651,7 @@
           D: {
             nom: 'Les chemins du veilleur', cycle: 'SIMPLE_CONTINU', cablage: null, fenetre: 'LOI 4.3',
             primitive: 'MOD_LOI_DU_COEUR (LOI_NIDS_DESSERVENT_PIEGES)', tags: ['ARMEMENT', 'RESEAU', 'INSECTES'],
-            requires_options: { Regle_Resolution_Piege: ['EXIGE_PRESENCE_LOCALE'] },
+            requires_options: { Regle_Resolution_Piege: ['exige Défense totale >= 1 (locale ou soutenue à distance)'] },
             texte: '<strong>Loi 4.3 :</strong> En 4.3, chaque Insecte quittant un Nid situé chez les Humains ou les Insectes peut utiliser 1 cran pour rejoindre directement une parcelle piégée du même rayon, à toute distance.',
             temoin: 'Transforme tout Nid H/I en répartiteur direct de sentinelles vers les Pièges.'
           },
@@ -712,7 +711,7 @@
           D: {
             nom: 'L’appel des berges gardées', cycle: 'SIMPLE_CONTINU', cablage: null, fenetre: '3.2',
             primitive: 'DEPLACEMENT + MOD_PUISSANCE', tags: ['ARMEMENT', 'SURCHAUFFE'],
-            requires_options: { Regle_Resolution_Piege: ['EXIGE_PRESENCE_LOCALE'] },
+            requires_options: { Regle_Resolution_Piege: ['exige Défense totale >= 1 (locale ou soutenue à distance)'] },
             texte: 'Vous pouvez transférer 1 Défenseur d’une parcelle des Entités ou des Reptiles vers une autre parcelle piégée de ces deux rayons ; puis retourner 1 jeton rouge en bleu sur une machine qui cible la destination.',
             temoin: 'Arme une Embuscade tout en infligeant Surchauffe à la machine menaçante.'
           },
@@ -760,7 +759,7 @@
           D: {
             nom: 'La relève des lucioles', cycle: 'SIMPLE_CONTINU', cablage: null, fenetre: '3.2',
             primitive: 'CREATION_ENTITE + DEPLACEMENT (GROUPE)', tags: ['POSE', 'REDEPLOIEMENT', 'INSECTES'],
-            requires_options: { Regle_Resolution_Piege: ['EXIGE_PRESENCE_LOCALE'] },
+            requires_options: { Regle_Resolution_Piege: ['exige Défense totale >= 1 (locale ou soutenue à distance)'] },
             texte: 'Vous pouvez poser 1 Piège sur une parcelle sans Piège des Entités ou des Insectes contenant 1 Défenseur et 1 Insecte, puis déplacer cet Insecte vers une autre parcelle du même rayon, à toute distance (groupe atomique).',
             temoin: 'Le Défenseur reste pour armer le nouveau Piège tandis que l’Insecte est redéployé ailleurs.'
           },
@@ -799,7 +798,7 @@
           D: {
             nom: 'Les fourmis sentinelles', cycle: 'SIMPLE_CONTINU', cablage: null, fenetre: '4.2 APRÈS PRODUCTION',
             primitive: 'DEPLACEMENT (2 INSECTES -> PIEGES)', tags: ['ARMEMENT', 'DISPERSION', 'INSECTES'],
-            requires_options: { Regle_Resolution_Piege: ['EXIGE_PRESENCE_LOCALE'] },
+            requires_options: { Regle_Resolution_Piege: ['exige Défense totale >= 1 (locale ou soutenue à distance)'] },
             texte: 'Après production en 4.2, vous pouvez envoyer jusqu’à <strong>2 Insectes</strong> de ce Nid vers des parcelles piégées de son rayon, à toute distance (1 Insecte max par destination).',
             temoin: 'Arme deux Embuscades distinctes sur le rayon tout en laissant le mouvement 4.3 disponible.'
           },
@@ -836,7 +835,7 @@
           D: {
             nom: 'La termitière gardée', cycle: 'SIMPLE_CONTINU', cablage: null, fenetre: 'LOI CONTACT MACHINE',
             primitive: 'MOD_LOI_DU_COEUR (LOI_NID_CONTACT_PIEGE_GARDE)', tags: ['CONTACT', 'PRESENCE', 'NID'],
-            requires_options: { Regle_Resolution_Piege: ['EXIGE_PRESENCE_LOCALE'] },
+            requires_options: { Regle_Resolution_Piege: ['exige Défense totale >= 1 (locale ou soutenue à distance)'] },
             texte: '<strong>Loi de contact :</strong> Quand une machine entre sur ce Nid, le Nid et ses Insectes survivent au contact si sa parcelle contient 1 Piège ET au moins 1 Défenseur ou 1 Insecte.',
             temoin: 'Attention : si le Piège s’est déclenché et a été retiré en 5.3 avant l’avancée, il ne protège plus au contact.'
           },
@@ -861,7 +860,7 @@
           B: {
             nom: 'La Branche des Guêpes Cazadores', cycle: 'SIMPLE_CONTINU', cablage: null, fenetre: 'LOI 4.2',
             primitive: 'MOD_LOI_DU_COEUR (LOI_NID_AUTONOME)', tags: ['NID', 'INSECTES'], requires_options: {},
-            texte: '<strong>Loi 4.2 (Pouponnière) :</strong> Ce Nid s’active aussi sans Défenseur en 4.2 s’il contient déjà au moins 2 Insectes au début de l’étape (1 activation max/tour).',
+            texte: '<strong>Loi 4.2 (Pouponnière) :</strong> Ce Nid s’active aussi sans Défenseur en 4.2 s’il contient déjà au moins 2 Insectes à l'instant où ce Nid est résolu (1 activation max/tour).',
             temoin: 'Génère +2 Insectes chaque tour en autonomie complète.'
           },
           C: {
@@ -873,7 +872,7 @@
           D: {
             nom: 'Les guêpes aux aguets', cycle: 'SIMPLE_CONTINU', cablage: null, fenetre: '4.2 APRÈS PRODUCTION',
             primitive: 'CREATION_ENTITE (PIEGE)', tags: ['POSE', 'ARMEMENT'],
-            requires_options: { Regle_Resolution_Piege: ['EXIGE_PRESENCE_LOCALE'] },
+            requires_options: { Regle_Resolution_Piege: ['exige Défense totale >= 1 (locale ou soutenue à distance)'] },
             texte: 'Après production en 4.2, si ce Nid contient au moins 1 Insecte et aucun Piège, vous pouvez poser 1 Piège sur sa parcelle (allume la case 2).',
             temoin: 'Auto-piège le Nid qui est immédiatement armé par sa propre production d’Insectes.'
           },
@@ -904,7 +903,7 @@
           D: {
             nom: 'Les mélipones convoyeurs', cycle: 'SIMPLE_CONTINU', cablage: null, fenetre: 'LOI 5.3 RÉCUPÉRATION',
             primitive: 'MOD_LOI_DU_COEUR (LOI_CONVOI_PIEGE_INSECTE)', tags: ['PERSISTANCE', 'ARMEMENT', 'INSECTES'],
-            requires_options: { Regle_Resolution_Piege: ['EXIGE_PRESENCE_LOCALE'] },
+            requires_options: { Regle_Resolution_Piege: ['exige Défense totale >= 1 (locale ou soutenue à distance)'] },
             texte: '<strong>Loi 5.3 :</strong> Une fois par tour, vous pouvez faire glisser ensemble 1 Piège engagé de ce rayon ET 1 Insecte disponible de sa parcelle vers la prochaine parcelle non rasée côté cœur, si elle est sans Piège.',
             temoin: 'Convoie à la fois le Piège et sa sentinelle d’armement pour le tour suivant.'
           },
@@ -941,7 +940,7 @@
           D: {
             nom: 'Le jardin des relèveuses', cycle: 'SIMPLE_CONTINU', cablage: null, fenetre: 'LOI 5.3 PRÉ-RETRAIT',
             primitive: 'MOD_LOI_DU_COEUR (LOI_NID_RELEVE_APRES_EMBUSCADE)', tags: ['RENOUVELLEMENT', 'INSECTES'],
-            requires_options: { Regle_Resolution_Piege: ['EXIGE_PRESENCE_LOCALE'] },
+            requires_options: { Regle_Resolution_Piege: ['exige Défense totale >= 1 (locale ou soutenue à distance)'] },
             texte: '<strong>Loi 5.3 :</strong> Si un Piège a paré au moins une frappe sur la parcelle de ce Nid pendant qu’il était actif ce tour-ci, créez-y 1 Insecte avant le retrait des Pièges (allume la case 6).',
             temoin: 'Récompense chaque Embuscade réussie sur le Nid par un nouvel Insecte en 5.3.'
           },
@@ -1017,7 +1016,7 @@
           {
             domaine: 'Mécanique des Pièges (Étape 5 · Axe 10)',
             avant: 'v4.3 à v5.1 : Un jeton Piège sur une parcelle parait automatiquement et inconditionnellement toutes les frappes ciblant cette parcelle, même sans aucun Défenseur ni Insecte.',
-            apres: 'v5.2 : Deux options exclusives sur l’Axe 10 :\n• Option par défaut EXIGE_PRESENCE_LOCALE (Embuscade Assistée) : le Piège pare automatiquement si et seulement si la parcelle dispose d’au moins 1 point de Défense à l’instant de la frappe (pion local ou soutien autorisé).\n• Option AMORTISSEUR_SANS_PARADE (Amortisseur de Dégâts) : aucune Parade, mais réduit la coupe effective de l’Abatteuse de -1 et ramène le terrassement du Bulldozer à 0 Souche (sans besoin de présence).'
+            apres: 'v5.2 : Deux options exclusives sur l’Axe 10 :\n• Option par défaut exige Défense totale >= 1 (locale ou soutenue à distance) (Embuscade Assistée) : le Piège pare automatiquement si et seulement si la parcelle dispose d’au moins 1 point de Défense à l’instant de la frappe (pion local ou soutien autorisé).\n• Option AMORTISSEUR_SANS_PARADE (Amortisseur de Dégâts) : aucune Parade, mais réduit la coupe effective de l’Abatteuse de -1 et ramène le terrassement du Bulldozer à 0 Souche (sans besoin de présence).'
           },
           {
             domaine: 'Engagement & Persistance des Pièges (5.3)',
@@ -1112,7 +1111,7 @@ if (CATALOGUE_TUILES.SLOT_COLONISATION_GARDIENS && CATALOGUE_TUILES.SLOT_COLONIS
 VERSION_CHANGELOG.unshift({
   version: 'v5.3',
   date: 'Version consolidée en vigueur',
-  titre: 'Seuil Imprimé Fixe (P4_2233 / P5_22233), Fin de partie unique en 5.3, Embuscade unique (100 profils) & Zéro Dette d’Insectes',
+  titre: 'Seuil Imprimé Fixe (P4_2233 / P5_22233), Fin de partie unique en 5.3, Embuscade unique (100 profils) & Zéro défausse immédiate d'Insectes',
   resume: 'Épuration cognitive majeure : le Seuil de Parade lit un Seuil Imprimé fixe par parcelle (sans jamais compter Arbres ni Souches). Suppression de l’Amortisseur et des 15 profils E (100 profils), vérification unique de fin de partie en fin de 5.3, pose furtive 4.1 autorisée sur parcelle ciblée, verrouillage des Insectes/Pièges sur parcelles ciblées en Étape 5, et bonus constructeur à N=3.',
   deltas: [
     {
@@ -1137,3 +1136,154 @@ VERSION_CHANGELOG.unshift({
     }
   ]
 });
+
+// === BEGIN SPEC_FORMELLE_V5_3 (auto-generated by build_v5_3_audit.py) ===
+const SPEC_FORMELLE_V5_3 = {
+  "schema_version": "5.3.1-audit",
+  "date_consolidation": "2026-11-16",
+  "architecture_reference": {
+    "total_emplacements_synergie": 30,
+    "total_pistes_migration": 2,
+    "total_profils": 100,
+    "topologies_validees": {
+      "P3": [
+        2,
+        3,
+        3
+      ],
+      "P4_2233": [
+        2,
+        2,
+        3,
+        3
+      ],
+      "P5_22233": [
+        2,
+        2,
+        2,
+        3,
+        3
+      ],
+      "P6": [
+        2,
+        2,
+        2,
+        3,
+        3,
+        3
+      ]
+    },
+    "reserves_materiel": "illimitees",
+    "plafond_repousse_parcelle": "dotation_initiale_arbres"
+  },
+  "principes_transverses": {
+    "gouvernance_unitaire": "Chaque Tuile de Synergie (Gardien, Rêve, Nid) et chaque piste de Migration est gouvernée exclusivement par le joueur de son Peuple d'origine (champ peuple_origine). Zéro vote de groupe.",
+    "communication_muette": "Silence tactique complet tant que les paravents sont fermés (aucun échange verbal ou gestuel sur les coups, cartes ou dés). Sous Le Cri d'Alarme de l'Ara (ouverture anticipée), visibilité publique des cartes et dés mais pose individuelle sans concertation orale.",
+    "pont_routier_routes_forestieres": "Le long d'un rayon de Forêt, toute Route Forestière est systématiquement sautée : viser devant, avancer, reculer, glisser un Piège ou migrer désignent toujours la prochaine parcelle non rasée dans cette direction. Latéralement (Forêt <-> Furtivité), une Route Forestière est infranchissable et inoccupable.",
+    "suppression_dette_et_verrouillage": "Zéro Insecte engagé et zéro verrouillage des parcelles ciblées. Les Insectes requis lors d'une parade classique sont défaussés immédiatement à la frappe. Tant qu'un Insecte est sur le plateau, il est libre. Seul un Piège ayant déjà paré au moins une frappe ce tour-ci ne peut plus payer un coût volontaire avant son retrait de fin d'attaques.",
+    "cascades_gardiens_a_plat": "On résout toujours intégralement l'action ou la tuile en cours avant d'examiner la Piste des Gardiens (signal binaire allumé/éteint par case 1..6, sans cumul de cardinalité). Dès qu'un Gardien s'ouvre, il reçoit immédiatement son marqueur 'utilisé' avant application de son texte. Balayage à plat dans l'ordre croissant des cases 1 à 6, répété tant qu'une case allumée porte un Gardien non utilisé."
+  },
+  "etapes_tour": [
+    {
+      "numero": 1,
+      "code": "PREPARATION_POSE_FURTIVITE",
+      "nom": "Distribution, Dés secrets et Pose des Défenseurs",
+      "regles": [
+        "Les machines déjà sur la dernière parcelle non rasée de leur rayon sont en Siège (carte posée face visible sur place, hors paquet).",
+        "S'il reste moins de cartes Machine que de joueurs (suite à un rayon entièrement rasé), distribution dans le sens horaire à partir du peuple ayant le plus d'Arbres debout ; les joueurs sans carte lancent quand même leurs 2 dés pour tenter d'ouvrir un Rêve.",
+        "Interdiction à la pose : Route Forestière, emplacement de tuile déjà construit ou plein (2 constructeurs), tuile inconstructible (Gardien sans case libre autorisée, Nid sans parcelle légale), ou rive de Furtivité donnant sur une Route Forestière lorsque l'action requiert une parcelle adjacente non rasée.",
+        "Piste de Furtivité à 4 emplacements par case (2 jumeaux rive J1, 2 jumeaux rive J2 ; max 2 Défenseurs par case). Lorsqu'un Défenseur ENTRE sur une case de Furtivité (1er Défenseur, 2e en réflexion ou 2e posé directement en choix définitif), on le pose sur l'un des 4 emplacements valides et l'éventuel autre Défenseur présent glisse aussitôt sur l'emplacement jumeau du même bord (orientant l'unique action du binôme). Retourner sur place un jeton de sa face réflexion à sa face choix définitif se fait strictement sur son emplacement actuel, sans déplacement ni tirage."
+      ]
+    },
+    {
+      "numero": 2,
+      "code": "REVELATION_DES_REVES_FURTIVITE",
+      "nom": "Ouverture des Paravents, Rêves, Dés et Furtivité",
+      "regles": [
+        "Ouverture simultanée des paravents. Fin du silence tactique ; ouverture de la fenêtre de jeu des cartes Sabotage visibles (gouvernées par les Humains, ou par leur acquéreur si les Humains sont absents).",
+        "Double aux dés : peut ouvrir un Rêve en piste. Hors double, le plus petit dé s'applique à la carte Machine (sauf Loi modifiant le dé retenu).",
+        "Si l'emplacement désigné par le dé retenu contient un Rêve, l'activation de cette machine est annulée pour le tour et ce Rêve peut s'ouvrir. Chaque Rêve ne peut s'ouvrir qu'au maximum 1 fois par tour toutes sources confondues.",
+        "Chaque binôme complet sur une case de Furtivité déclenche 1 seule action, gouvernée par le joueur de la rive où se trouvent les 2 emplacements jumeaux occupés."
+      ]
+    },
+    {
+      "numero": 3,
+      "code": "CONSTRUCTION_SYNERGIES",
+      "nom": "Construction obligatoire des Tuiles de Synergie",
+      "regles": [
+        "Toute tuile réunissant ses 2 constructeurs (ou 1 Défenseur + 1 Insecte avec La Brèche du Tamanoir) est obligatoirement construite.",
+        "Nid : posé sur une parcelle non rasée de l'un de ses 2 rayons ne contenant aucune machine ni aucun autre Nid, accompagné de tous ses Défenseurs constructeurs.",
+        "Rêve : la Tactique la plus à droite sur la piste est définitivement éjectée ; seules les tuiles situées à droite de ce trou glissent d'un cran vers la gauche ; le nouveau Rêve prend place en case 6 (les Insectes Bug restent sur leur numéro d'emplacement imprimé).",
+        "Libération de bâtisseurs (Gardien/Rêve) : si 1 seul Défenseur est libéré parmi 2 (3 joueurs standard, ou 4-6 joueurs avec La Danse des Esprits-Fauves), le joueur du Peuple d'origine de la tuile choisit lequel et sa rive (1re parcelle adjacente non rasée). Si tous les Défenseurs bâtisseurs sont libérés (3 joueurs + Danse), chaque propriétaire choisit sa rive, dans la limite des Défenseurs réellement présents."
+      ]
+    },
+    {
+      "numero": 4,
+      "code": "NIDS_ET_MIGRATION",
+      "nom": "Production des Nids et Migration des Insectes",
+      "regles": [
+        "Chaque Nid actif est résolu comme un bloc indivisible : (1) création de 1 ou 2 Insectes selon le nombre d'Insectes physiquement présents sur sa parcelle à cet instant précis (y compris pour l'activation autonome des Guêpes Cazadores), puis (2) pouvoir 'après production' du Nid, puis seulement (3) balayage 1..6 des Gardiens. Une production hors phase (Le Miel des Ancêtres) ne crée que les jetons Insecte sans déclencher le pouvoir propre du Nid.",
+        "Migration : chaque Insecte sur la roue peut se déplacer de 0 ou 1 cran (jusqu'à 2 avec L'Envol du Batará Suiveur), même s'il a bougé lors de la production d'un Nid. On retourne chaque jeton déplacé sur sa face verso pour suivi, puis on remet tous les jetons à l'endroit en fin de Migration avant d'évaluer la Colonisation.",
+        "Depuis la dernière parcelle non rasée d'un rayon, 1 cran permet d'entrer sur n'importe quelle case 1..6 d'une piste globale (Bug du Cerveau ou Colonisation des Gardiens), sans limite de jetons par case. Cet aller simple est définitif."
+      ]
+    },
+    {
+      "numero": 5,
+      "code": "ATTAQUES_ET_TEST_FIN",
+      "nom": "Attaques des Machines et Vérification de Fin de Partie",
+      "regles": [
+        "Fermeture de la fenêtre libre des cartes Sabotage au coup d'envoi de la 1re attaque ; toutefois, toute carte Sabotage fraîchement piochée pendant les attaques peut être jouée immédiatement au moment de sa pioche.",
+        "Ordre des machines : Piste des Tactiques de 1 à 6, puis machines en Siège. Sur un même rayon au même rang (ou en Siège), l'Abatteuse agit toujours avant le Bulldozer ; entre rayons distincts au même rang, ordre libre entre les joueurs concernés.",
+        "Chaque machine est résolue d'un seul tenant : lecture dynamique de ses cibles depuis sa position physique réelle à cet instant (en sautant toute Route Forestière) -> frappes -> avancée éventuelle -> gain éventuel de jeton rouge.",
+        "Chaîne stricte des parades à chaque frappe : (1) Bond du Jaguar (Loi auto : 2 jetons bleus défaussés -> toutes frappes restantes de la machine parées + recul) -> (2) Piquée de la Harpie -> (3) Piège (Embuscade auto si Défense totale >= 1, locale ou soutenue à distance ; le Piège est marqué comme ayant servi) -> (4) Parade classique (Défenseurs + défausse immédiate des Insectes manquants).",
+        "Contact Machine-Nid : tout mouvement de machine (avancée, recul, repli depuis une Route) entrant sur la parcelle d'un Nid non protégé renvoie ce Nid en lisière (reconstructible) et défausse tous les Insectes de la parcelle (Défenseurs et Piège restent).",
+        "Création d'une Route Forestière (0 Arbre et 0 Souche après un Bulldozer) : recul automatique des machines présentes vers la prochaine parcelle non rasée côté bordure, ou vers le cœur uniquement si tout est déjà rasé côté bordure (maintien irréversible du statut de Siège ; retrait définitif de la partie si tout le rayon est rasé).",
+        "Fin des attaques : effets 'à la fin des attaques' (ex. Ruches des Mélipones) et retrait de tout Piège ayant paré au moins 1 frappe durant le tour.",
+        "Vérification de fin de partie : fin du Tour 8, Rêve en case 1, ou seuil fixe de Réveil atteint sur la Piste des Gardiens (seuil calculé une fois pour toutes à la mise en place : inactif si moins de 3 Gardiens dans la partie, sinon min(nb_joueurs, total_gardiens_partie) avec minimum 3 et plafond 5 à 6 joueurs ; tout Gardien renvoyé en lisière perd son marqueur). Si atteint : saut de l'Apprentissage et passage direct à la Repousse Finale."
+      ]
+    },
+    {
+      "numero": 6,
+      "code": "APPRENTISSAGE_ET_MENAGE",
+      "nom": "Apprentissage du Contremaître et Ménage de fin de tour",
+      "regles": [
+        "Seules les machines activées par une carte révélée ce tour-ci génèrent de l'Apprentissage (les machines en Siège produisent 0 Apprentissage).",
+        "Gain par machine : +1 par parcelle réellement endommagée (au moins 1 Arbre coupé ou 1 Souche retirée par cette machine), +1 par jeton rouge acquis en fin d'attaque, -1 par jeton bleu présent sur la machine.",
+        "Réductions : application des retraits volontaires de tuiles (Voile de l'Oubli, Brume de la Dendrobate) AVANT les Insectes Bug du Cerveau (un Bug sur une case déjà à 0 jeton n'est pas défaussé et reste en place).",
+        "Avancement : la Tactique strictement seule en tête avec au moins 1 jeton échange sa place avec sa voisine de gauche (y compris un Rêve, qui recule d'un cran à droite ; immobile si déjà en case 1). En cas d'égalité avec L'Écho des Voix Célestes amenant son Rêve en case 1, la fin de partie se déclenche immédiatement à la fin de ce tour (Repousse Finale).",
+        "Ménage systématique : remise en réserve de 100 % des jetons d'Apprentissage de toutes les tuiles dans tous les cas, retrait des marqueurs 'utilisé' des Gardiens et retour en main des Défenseurs."
+      ]
+    }
+  ],
+  "arbitrages_valides": {
+    "A01": "Dés et Tactiques : hors double (ouverture Rêve), le plus petit dé s'applique à la carte Machine (modifié par les Lois).",
+    "A02": "Rêve sur dé Machine : annule l'activation de la machine et peut ouvrir ce Rêve (max 1 ouverture par Rêve et par tour).",
+    "A03": "Furtivité à 4 emplacements (2 jumeaux/rive) : entrer sur la case tire l'autre jeton sur le jumeau et oriente l'action unique ; retourner en choix définitif se fait sur place sans déplacement.",
+    "A04": "Gouvernance unitaire : chaque tuile de Synergie et piste de Migration est décidée uniquement par son Peuple d'origine.",
+    "A05": "Parade classique sans dette : défausse immédiate à la frappe des Insectes requis ; suppression totale des Insectes engagés.",
+    "A06": "Armement des Pièges : Embuscade dès que Défense totale >= 1 (locale ou à distance) ; tout Piège ayant paré >= 1 fois dans le tour est retiré en fin d'attaques.",
+    "A07": "Zéro verrouillage des parcelles ciblées : Insectes toujours libres tant que présents ; seul un Piège déjà déclenché ce tour-ci ne peut plus payer de coût volontaire.",
+    "A08": "Pont routier : Routes Forestières systématiquement sautées le long d'un rayon, mais infranchissables/inoccupables latéralement.",
+    "A09": "Repli sur création de Route : recul automatique vers la bordure par défaut, vers le cœur seulement si bord tout rasé, retrait si rayon tout rasé ; Siège irréversible maintenu.",
+    "A10": "Autonomie du Siège : actif même si la 4e Tactique est éjectée, et ne génère jamais de jetons d'Apprentissage.",
+    "A11": "Insertion d'un Rêve : éjecte la Tactique la plus à droite ; seules les tuiles à droite du trou glissent à gauche ; pose en case 6 ; Bugs fixes sur les cases.",
+    "A12": "Cascades de Gardiens : fin complète de l'effet en cours, marquage immédiat à l'ouverture, balayage à plat de 1 à 6 sans pile imbriquée.",
+    "A13": "Faces 2 et Lois passives : seule la face visible s'applique (Faces 2 autonomes) ; une Loi passive reçoit automatiquement son marqueur dès que sa case s'allume.",
+    "A14": "Seuil de Réveil fixe : calculé à la mise en place (inactif si < 3 Gardiens en jeu) ; retour en lisière efface le marqueur.",
+    "A15": "Test de fin de partie : maintenu en fin d'attaques (saut Apprentissage), avec déclenchement en fin d'Apprentissage si L'Écho des Voix Célestes amène son Rêve en case 1.",
+    "A16": "Contact Machine-Nid : tout mouvement entrant (avancée, recul, repli) renvoie le Nid reconstructible en lisière et défausse tous les Insectes de la parcelle.",
+    "A17": "Migration des Insectes : 0 ou 1 cran facultatif (suivi par retournement des pions) ; aller simple définitif et sans limite vers les pistes globales.",
+    "A18": "Production des Nids : bloc indivisible (création selon état réel présent + pouvoir du Nid avant Gardiens) ; Miel des Ancêtres restreint aux jetons Insecte.",
+    "A19": "Cibles dynamiques : lues selon la position physique réelle de la machine à l'instant où elle attaque.",
+    "A20": "Matamata et chaîne des parades : Matamata vérifie la présence d'une Souche à chaque frappe ; ordre Jaguar -> Harpie -> Piège -> Parade classique.",
+    "A21": "Anti-blocage et Nids : pose interdite sur case morte/tuile inconstructible ; 1 seul Nid par parcelle sans machine ; choix du bâtisseur libéré par Peuple d'origine.",
+    "A22": "Communication muette : silence tactique sous paravent fermé ; simple visibilité publique sans concertation orale sous l'Ara.",
+    "A23": "Apprentissage : dommage réel requis (>= 1 Arbre coupé ou Souche retirée) ; retraits volontaires avant Bugs ; remise à zéro intégrale en fin d'étape.",
+    "A24": "Cartes Sabotage : visibles, gouvernées par les Humains (ou acquéreur si absents), recyclées, jouables de la Révélation au début des attaques + immédiatement si piochées en attaque.",
+    "A25": "Séquence des attaques : Tactiques 1..6 puis Sièges ; Abatteuse avant Bulldozer sur un même rayon, libre entre rayons distincts ; machine résolue d'un seul tenant."
+  }
+};
+if (typeof window !== "undefined") {
+  window.SPEC_FORMELLE_V5_3 = SPEC_FORMELLE_V5_3;
+}
+// === END SPEC_FORMELLE_V5_3 ===

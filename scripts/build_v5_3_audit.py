@@ -90,7 +90,7 @@ SPEC_FORMELLE_V5_3: dict[str, Any] = {
         ),
         "suppression_dette_et_verrouillage": (
             "Zéro Insecte engagé et zéro verrouillage des parcelles ciblées. Les Insectes "
-            "requis lors d'une parade classique sont défaussés immédiatement à la frappe. "
+            "requis lors d’une parade classique sont défaussés immédiatement à la frappe. "
             "Tant qu'un Insecte est sur le plateau, il est libre. Seul un Piège ayant déjà "
             "paré au moins une frappe ce tour-ci ne peut plus payer un coût volontaire avant "
             "son retrait de fin d'attaques."
@@ -197,7 +197,7 @@ SPEC_FORMELLE_V5_3: dict[str, Any] = {
                 "Contact Machine-Nid : tout mouvement entrant (avancée, recul, repli) renvoie le Nid reconstructible en lisière et défausse tous les Insectes de la parcelle.",
                 "Migration des Insectes : 0 ou 1 cran facultatif (suivi par retournement des pions) ; aller simple définitif et sans limite vers les pistes globales.",
                 "Production des Nids : bloc indivisible (création selon état réel présent + pouvoir du Nid avant Gardiens) ; Miel des Ancêtres restreint aux jetons Insecte.",
-                "Cibles dynamiques : lues selon la position physique réelle de la machine à l'instant où elle attaque.",
+                "Cibles dynamiques : lues selon la position physique réelle de la machine à l’instant où elle attaque.",
                 "Matamata et chaîne des parades : Matamata vérifie la présence d'une Souche à chaque frappe ; ordre Jaguar -> Harpie -> Piège -> Parade classique.",
                 "Anti-blocage et Nids : pose interdite sur case morte/tuile inconstructible ; 1 seul Nid par parcelle sans machine ; choix du bâtisseur libéré par Peuple d'origine.",
                 "Communication muette : silence tactique sous paravent fermé ; simple visibilité publique sans concertation orale sous l'Ara.",
@@ -302,7 +302,7 @@ GLOBAL_LEXICAL_RULES: list[tuple[str, str, str]] = [
     ),
     (
         r"dette\s+d['’]insectes?",
-        "défausse immédiate d'Insectes",
+        "défausse immédiate d’Insectes",
         "Purge concept 'dette d'Insectes'",
     ),
     (
@@ -346,7 +346,7 @@ def patch_tile_text_by_identity(tile_norm_header: str, text: str, field_name: st
     if "coupe-feuilles" in tile_norm_header or "coupe feuilles" in tile_norm_header:
         new_txt, n = safe_sub(
             r"(?:retirez|d[ée]faussez)\s+1\s+insecte\s+engag[ée]\s+de\s+moins[^.;]*",
-            "épargnez immédiatement 1 Insecte qui aurait dû être défaussé lors d'une parade classique",
+            "épargnez immédiatement 1 Insecte qui aurait dû être défaussé lors d’une parade classique",
             updated,
         )
         if n:
@@ -387,7 +387,7 @@ def patch_tile_text_by_identity(tile_norm_header: str, text: str, field_name: st
     if "anaconda" in tile_norm_header:
         new_txt, n = safe_sub(
             r"[^.!?]*ne\s+modifie\s+pas\s+les\s+cibles[^.!?]*[.!?]?",
-            " Les cibles de la machine se liront depuis sa nouvelle position réelle à l'instant où elle attaque.",
+            " Les cibles de la machine se liront depuis sa nouvelle position réelle à l’instant où elle attaque.",
             updated,
         )
         if n:
@@ -398,12 +398,12 @@ def patch_tile_text_by_identity(tile_norm_header: str, text: str, field_name: st
     if "matamata" in tile_norm_header:
         new_txt, n1 = safe_sub(
             r"deux\s+parcelles\s+cibl[ée]es\s+contenant\s+au\s+moins\s+une\s+souche",
-            "jusqu'à deux parcelles non rasées (le bonus s'applique à chaque frappe trouvant au moins une Souche sur place à cet instant)",
+            "jusqu’à deux parcelles non rasées (le bonus s’applique à chaque frappe trouvant au moins une Souche sur place à cet instant)",
             updated,
         )
         new_txt, n2 = safe_sub(
             r"une\s+parcelle\s+cibl[ée]e\s+contenant\s+au\s+moins\s+une\s+souche",
-            "une parcelle non rasée (le bonus s'applique à chaque frappe trouvant au moins une Souche sur place à cet instant)",
+            "une parcelle non rasée (le bonus s’applique à chaque frappe trouvant au moins une Souche sur place à cet instant)",
             new_txt,
         )
         if n1 or n2:
@@ -417,7 +417,7 @@ def patch_tile_text_by_identity(tile_norm_header: str, text: str, field_name: st
             if any(w in norm_u for w in ("avance", "gauche", "cran")):
                 updated = (
                     updated.rstrip()
-                    + " S'il atteint ainsi l'emplacement 1 en fin d'Apprentissage, la fin de partie se déclenche à la fin de ce tour (Repousse Finale directe)."
+                    + " S’il atteint ainsi l’emplacement 1 en fin d’Apprentissage, la fin de partie se déclenche à la fin de ce tour (Repousse Finale directe)."
                 )
                 changes.append("Écho des Voix Célestes : déclenchement fin de partie au rang 1 en fin d'Apprentissage")
 
@@ -435,7 +435,7 @@ def patch_tile_text_by_identity(tile_norm_header: str, text: str, field_name: st
     if "cazadores" in tile_norm_header or "pouponniere" in tile_norm_header:
         new_txt, n = safe_sub(
             r"au\s+d[ée]but\s+de\s+l['’][ée]tape(?:\s+des\s+nids)?",
-            "à l'instant où ce Nid est résolu",
+            "à l’instant où ce Nid est résolu",
             updated,
         )
         if n:

@@ -457,7 +457,7 @@
           <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
             <h3 class="text-sm font-bold text-slate-900 mb-1">Importer un Manifeste JSON d'Instance</h3>
             <p class="text-xs text-slate-500 mb-3">Collez un bloc JSON d'essai pour reconfigurer immédiatement les 10 axes, les Peuples et le Livret Didactique :</p>
-            <textarea id="json-import-input" rows="5" placeholder='{"chassis_overrides": {"Regle_Resolution_Piege": "AMORTISSEUR_SANS_PARADE"}, "peuples_cercle": ["M","H","I"] ...}' class="w-full font-mono text-xs p-3 rounded-xl border border-slate-300 bg-slate-50 focus:outline-none focus:border-forest-600"></textarea>
+            <textarea id="json-import-input" rows="5" placeholder='{"chassis_overrides": {"P_Max": 5}, "peuples_cercle": ["M","H","I"]}' class="w-full font-mono text-xs p-3 rounded-xl border border-slate-300 bg-slate-50 focus:outline-none focus:border-forest-600"></textarea>
             <button onclick="importManifestJson()" class="mt-2 w-full py-2 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-semibold transition">
               ⚡ Appliquer ce JSON et régénérer le Livret Didactique
             </button>
@@ -465,7 +465,7 @@
 
           <!-- Référence rapide des 8 Primitives Formelles -->
           <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-            <h3 class="text-sm font-bold text-slate-900 mb-2">Grammaire Formelle v5.2 : Les 8 Primitives Atomiques</h3>
+            <h3 class="text-sm font-bold text-slate-900 mb-2">Grammaire Formelle v5.3 : Les 8 Primitives Atomiques</h3>
             <div class="space-y-2 text-xs">
               <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
                 <span class="font-mono font-bold text-forest-700">1. MOD_SEUIL</span> — Réduit de -X le Seuil de Parade (plancher 1) ou `auto_parade: true`.
@@ -474,7 +474,7 @@
                 <span class="font-mono font-bold text-forest-700">2. CREATION_ENTITE</span> — Crée `PIEGE` (case 2), `SABOTAGE` (case 3), `INSECTE` (case 6) ou `SANCTUAIRE_SOUCHE`.
               </div>
               <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-                <span class="font-mono font-bold text-forest-700">3. DEPLACEMENT</span> — Déplace `DEFENSEUR`, `PIEGE` (non engagé), `INSECTE`, `MACHINE` ou `CIBLAGE`.
+                <span class="font-mono font-bold text-forest-700">3. DEPLACEMENT</span> — Déplace `DEFENSEUR`, `PIEGE` (non déclenché ce tour), `INSECTE`, `MACHINE` ou `CIBLAGE`.
               </div>
               <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
                 <span class="font-mono font-bold text-forest-700">4. MOD_PUISSANCE</span> — Retire rouge, inverse rouge → bleu *Surchauffe*, ou consomme 2 bleus.
@@ -503,6 +503,7 @@
   <!-- BASE DE DONNÉES COMPLÈTE v5.2 & MOTEUR D'INSTANCIATION JAVASCRIPT     -->
   <!-- ===================================================================== -->
   <script src="data/amazonia_data_v5_3.js"></script>
+  <script src="data/livret_v5_3.js"></script>
   <script>
     // 5. ÉTAT RÉACTIF DE L'INSTANCE EN COURS
     // -------------------------------------------------------------------------
@@ -512,18 +513,15 @@
       highlightDynamic: true,
       // Ordre circulaire des Peuples actifs autour de la table (3 à 6)
       peuplesCercle: ['M', 'R', 'O', 'H'],
-      // Valeurs des 10 axes du châssis
+      // Valeurs des 7 axes actifs du châssis v5.3
       chassis: {
-        Regle_Ouverture_Reve_Multiple: 'UNIQUE_PAR_TOUR',
         P_Max: 4,
-        Arbres_Par_Parcelle_Init: 3,
+        Regle_Ouverture_Reve_Multiple: 'UNIQUE_PAR_TOUR',
         Offset_Seuil_Parade: 0,
         Mise_En_Place_Tactiques: 'ORDRE_FIXE_T1_T6',
         Declenchement_Fin_De_Piste: 'ARRIVEE_DERNIERE_PARCELLE',
         Role_Abatteuse_Fin_De_Piste: 'STANDARD_COUPE_ARBRE',
-        Synergie_Binome_Machines: 'INDIVIDUELLE',
-        Regle_Seuil_Gardiens: 'FIXE_N',
-        Regle_Resolution_Piege: 'EXIGE_PRESENCE_LOCALE'
+        Synergie_Binome_Machines: 'INDIVIDUELLE'
       },
       // Profil choisi (A, B, C, D ou E) pour chacun des 30 emplacements de lisière
       profileOverrides: {},
@@ -573,6 +571,7 @@
       const prof = tile.profils[profLetter];
       if (prof.requires_options) {
         for (const [axKey, allowedVals] of Object.entries(prof.requires_options)) {
+          if (axKey === 'Regle_Resolution_Piege') continue;
           if (!allowedVals.includes(chassisObj[axKey])) {
             return {
               ok: false,
@@ -583,6 +582,7 @@
       }
       return { ok: true };
     }
+
 
     // Calcule l'indice unique (1 à 128) de la configuration de châssis active
     function computeConfigurationIndex() {
@@ -621,55 +621,32 @@
 
     function applyPresetBundle(bundleKey) {
       state.bundleId = bundleKey;
-      // Remettre tous les profils à A avant d'appliquer les substitutions du bundle
       Object.keys(state.profileOverrides).forEach(k => { state.profileOverrides[k] = 'A'; });
       state.slotsInsectes.SLOT_BUG_CERVEAU = 'A';
       state.slotsInsectes.SLOT_COLONISATION_GARDIENS = 'A';
 
-      if (bundleKey === 'STANDARD_A') {
-        state.chassis.Regle_Resolution_Piege = 'EXIGE_PRESENCE_LOCALE';
-      } else if (bundleKey === 'ESSAI_52_EMBUSCADE') {
-        state.chassis.Regle_Resolution_Piege = 'EXIGE_PRESENCE_LOCALE';
+      if (bundleKey === 'ESSAI_52_EMBUSCADE') {
         D_SLOTS.forEach(id => { state.profileOverrides[id] = 'D'; });
-      } else if (bundleKey === 'ESSAI_52_AMORTISSEUR') {
-        state.chassis.Regle_Resolution_Piege = 'AMORTISSEUR_SANS_PARADE';
-        D_SLOTS.forEach(id => { state.profileOverrides[id] = 'E'; });
       } else if (bundleKey === '52_CAPYBARA_D') {
         state.peuplesCercle = ['M', 'H', 'I'];
-        state.chassis.Regle_Resolution_Piege = 'EXIGE_PRESENCE_LOCALE';
         Object.assign(state.profileOverrides, { G7: 'D', R3: 'A', G13: 'A', R6: 'D', M1: 'D', M4: 'D' });
-      } else if (bundleKey === '52_CAPYBARA_E') {
-        state.peuplesCercle = ['M', 'H', 'I'];
-        state.chassis.Regle_Resolution_Piege = 'AMORTISSEUR_SANS_PARADE';
-        Object.assign(state.profileOverrides, { G7: 'E', R3: 'A', G13: 'A', R6: 'E', M1: 'E', M4: 'E' });
       } else if (bundleKey === '52_HARPIE_D') {
         state.peuplesCercle = ['H', 'O', 'I'];
-        state.chassis.Regle_Resolution_Piege = 'EXIGE_PRESENCE_LOCALE';
         Object.assign(state.profileOverrides, { G11: 'D', R5: 'D', G15: 'A', R6: 'D', M3: 'D', M4: 'D' });
-      } else if (bundleKey === '52_HARPIE_E') {
-        state.peuplesCercle = ['H', 'O', 'I'];
-        state.chassis.Regle_Resolution_Piege = 'AMORTISSEUR_SANS_PARADE';
-        Object.assign(state.profileOverrides, { G11: 'E', R5: 'E', G15: 'A', R6: 'E', M3: 'E', M4: 'E' });
       } else if (bundleKey === '52_DENDROBATE_D') {
         state.peuplesCercle = ['R', 'E', 'I'];
-        state.chassis.Regle_Resolution_Piege = 'EXIGE_PRESENCE_LOCALE';
         Object.assign(state.profileOverrides, { G10: 'D', G14: 'D', R8: 'D', R10: 'D', M2: 'D', M5: 'D' });
-      } else if (bundleKey === '52_DENDROBATE_E') {
-        state.peuplesCercle = ['R', 'E', 'I'];
-        state.chassis.Regle_Resolution_Piege = 'AMORTISSEUR_SANS_PARADE';
-        Object.assign(state.profileOverrides, { G10: 'E', G14: 'E', R8: 'E', R10: 'E', M2: 'E', M5: 'E' });
       } else if (bundleKey === '52_PIERRE_D') {
         state.peuplesCercle = ['H', 'R', 'I'];
-        state.chassis.Regle_Resolution_Piege = 'EXIGE_PRESENCE_LOCALE';
         Object.assign(state.profileOverrides, { G9: 'A', G14: 'D', R4: 'D', R6: 'D', M2: 'D', M4: 'D' });
       } else if (bundleKey === '52_ATELE_D') {
         state.peuplesCercle = ['M', 'O', 'I'];
-        state.chassis.Regle_Resolution_Piege = 'EXIGE_PRESENCE_LOCALE';
         Object.assign(state.profileOverrides, { G3: 'D', G4: 'A', G13: 'A', G15: 'A', M1: 'D', M3: 'D' });
       }
 
       refreshAllUI();
     }
+
 
     // -------------------------------------------------------------------------
     // 8. ACTIONS DU CONFIGURATEUR (PEUPLES, AXES, PROFILS)
@@ -708,39 +685,15 @@
 
     function updateChassisAxis(key, rawValue) {
       let val = rawValue;
-      if (key === 'P_Max' || key === 'Arbres_Par_Parcelle_Init' || key === 'Offset_Seuil_Parade') {
+      if (key === 'P_Max' || key === 'Offset_Seuil_Parade') {
         val = Number(rawValue);
       }
       state.chassis[key] = val;
-
-      // Si on change l'option de Piège, vérifier s'il y a des profils D ou E devenus incompatibles
-      if (key === 'Regle_Resolution_Piege') {
-        const conflicts = [];
-        Object.entries(state.profileOverrides).forEach(([tId, pLetter]) => {
-          const check = isProfileCompatibleWithChassis(tId, pLetter);
-          if (!check.ok) {
-            conflicts.push(`${tId}_${pLetter}`);
-            // Basculer automatiquement D <-> E sur le même emplacement pour fluidifier l'exploration, en avertissant l'utilisateur
-            const targetLetter = val === 'AMORTISSEUR_SANS_PARADE' ? 'E' : 'D';
-            if (CATALOGUE_TUILES[tId].profils[targetLetter]) {
-              state.profileOverrides[tId] = targetLetter;
-            } else {
-              state.profileOverrides[tId] = 'A';
-            }
-          }
-        });
-        if (conflicts.length > 0) {
-          showToast(
-            'Adaptation automatique des profils D/E (§ 2.7.2)',
-            `${conflicts.length} tuile(s) (${conflicts.join(', ')}) exigeaient l'autre mode de Piège et ont été basculées sur leur profil homologue compatible.`
-          );
-        }
-      }
-
       state.bundleId = 'CUSTOM';
       document.getElementById('preset-bundle-select').value = 'CUSTOM';
       refreshAllUI();
     }
+
 
     function resetChassisToDefault() {
       CHASSIS_AXES_SPEC.forEach(ax => {
@@ -759,7 +712,7 @@
       if (!check.ok) {
         showToast(
           'Rejet de contrainte dure (requires_options)',
-          `${check.reason} Changez d'abord l'Axe 10 (Résolution des Pièges) dans le configurateur si vous souhaitez tester ce profil.`
+          `${check.reason} Ajustez l'axe requis dans le configurateur si vous souhaitez tester ce profil.`
         );
         return;
       }
@@ -794,12 +747,10 @@
       document.getElementById('modified-axes-count').textContent = `${modifiedAxes.length} écart${modifiedAxes.length > 1 ? 's' : ''}`;
       document.getElementById('summary-peuples-pill').textContent = `${n} Joueurs : ${state.peuplesCercle.join('–')} (${activeTileIds.length} tuiles)`;
 
-      const isEmbuscade = state.chassis.Regle_Resolution_Piege === 'EXIGE_PRESENCE_LOCALE';
       const piegePill = document.getElementById('summary-piege-pill');
-      piegePill.textContent = isEmbuscade ? 'Pièges : Embuscade Assistée (Déf ≥ 1)' : 'Pièges : Amortisseur de Dégâts';
-      piegePill.className = isEmbuscade
-        ? 'px-2 py-0.5 rounded bg-emerald-900/80 border border-emerald-500/50 text-emerald-200 font-medium'
-        : 'px-2 py-0.5 rounded bg-amber-900/80 border border-amber-500/50 text-amber-200 font-medium';
+      piegePill.textContent = 'Pièges : Embuscade (Déf ≥ 1)';
+      piegePill.className = 'px-2 py-0.5 rounded bg-emerald-900/80 border border-emerald-500/50 text-emerald-200 font-medium';
+
 
       document.getElementById('summary-arbres-pill').textContent = `Capital : ${totalArbres} Arbres (${state.chassis.P_Max === 5 ? 'P5_22233 · 12×' + n : 'P4_2233 · 10×' + n})`;
 
@@ -860,483 +811,7 @@
       if (checked) art.classList.add('highlight-dynamic');
       else art.classList.remove('highlight-dynamic');
     }
-
-    function renderDidacticRulebook() {
-      const n = state.peuplesCercle.length;
-      const c = state.chassis;
-      const { lisieres, activeTileIds } = getActiveLisieresAndTiles();
-      const totalArbres = n * (c.P_Max === 5 ? 12 : 10);
-      const modifiedAxes = getModifiedAxesList();
-      const configNum = computeConfigurationIndex();
-      const isEmbuscade = c.Regle_Resolution_Piege === 'EXIGE_PRESENCE_LOCALE';
-      const hasInsectesPlayer = state.peuplesCercle.includes('I');
-
-      // Compter combien de tuiles Gardien sont disponibles autour de cette table
-      const gardiensDispoCount = activeTileIds.filter(id => CATALOGUE_TUILES[id].famille === 'GARDIEN').length;
-
-      // Texte dynamique du Seuil de Réveil des Gardiens
-      let texteSeuilGardiens = `dès que la Piste des Gardiens contient <strong>${n} tuiles Gardien actives</strong> (autant qu'il y a de joueurs autour de la table)`;
-      if (c.Regle_Seuil_Gardiens === 'MIN_N_OU_DISPONIBLES') {
-        texteSeuilGardiens = `dès que la Piste des Gardiens contient <strong>${Math.min(n, gardiensDispoCount)} tuiles Gardien actives</strong> (le minimum entre N=${n} joueurs et les ${gardiensDispoCount} tuiles Gardien disponibles sur vos lisières)`;
-      } else if (c.Regle_Seuil_Gardiens === 'TOUTES_CASES_6') {
-        texteSeuilGardiens = `dès que les <strong>6 cases Déclencheurs</strong> de la Piste des Gardiens sont toutes occupées`;
-      }
-      if (state.slotsInsectes.SLOT_COLONISATION_GARDIENS === 'B') {
-        texteSeuilGardiens += ` <em>(avec le Profil B de Colonisation actif dans cette instance, chaque case Déclencheur vide portant au moins 2 Insectes compte aussi pour 1 Gardien actif !)</em>`;
-      } else if (c.Regle_Seuil_Gardiens === 'FIXE_N' && gardiensDispoCount < n) {
-        texteSeuilGardiens += ` <em>(Note de configuration : votre cercle actuel ne comporte que ${gardiensDispoCount} tuile(s) Gardien pour N=${n} joueurs ; sans le Profil B de Colonisation, la victoire anticipée par Réveil est inaccessible dans cette partie)</em>`;
-      }
-
-      // Texte dynamique de la Repousse Finale (vérifie si R6_C ou R8_E sont dans l'instance)
-      const hasR6C = activeTileIds.includes('R6') && state.profileOverrides['R6'] === 'C';
-      const hasR8E = activeTileIds.includes('R8') && state.profileOverrides['R8'] === 'E';
-
-      const container = document.getElementById('rulebook-article');
-      container.innerHTML = `
-        <!-- EN-TÊTE ÉDITORIAL STYLE LIVRET v4.3 + FICHE D'IDENTITÉ DE L'INSTANCE -->
-        <div class="border-b-4 border-forest-800 pb-6 mb-8">
-          <div class="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <div class="text-xs font-mono uppercase tracking-widest text-forest-700 font-bold mb-1">
-                Livret de Règles Didactique Instancié · Lecture Humaine (Architecture v4.3 → Données v5.3)
-              </div>
-              <h1 class="text-3xl sm:text-4xl font-bold text-forest-950 tracking-tight">
-                AMAZONIA : DERNIER REMPART
-              </h1>
-              <p class="text-sm text-slate-600 mt-1 font-medium">
-                Jeu coopératif asymétrique à communication limitée · Instance configurée pour <span class="dyn-span">${n} joueurs (${state.peuplesCercle.map(code => PEUPLES[code].nom).join(', ')})</span> · Durée max : 8 tours
-              </p>
-            </div>
-            <div class="bg-forest-50 border border-forest-200 rounded-xl p-3 text-xs font-mono text-forest-900">
-              <div><strong>Version :</strong> v5.3 (Consolidée)</div>
-              <div><strong>Châssis :</strong> #${configNum} / 128</div>
-              <div><strong>Bundle :</strong> ${state.bundleId}</div>
-              <div><strong>Pièges :</strong> ${isEmbuscade ? 'Embuscade Assistée' : 'Amortisseur'}</div>
-            </div>
-          </div>
-
-          <!-- Cartouche de traçabilité : Ce qui caractérise cette instance & ce qui a changé depuis v5.1 -->
-          <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
-            <div>
-              <div class="font-bold text-slate-800 uppercase tracking-wider mb-1">🎯 Paramètres de cette instance :</div>
-              <ul class="space-y-1 text-slate-600">
-                <li>• <strong>Table (${n} Peuples) :</strong> ${state.peuplesCercle.map(p => `${PEUPLES[p].icon} ${PEUPLES[p].nom} (${p})`).join(' → ')}</li>
-                <li>• <strong>Forêt initiale :</strong> <span class="dyn-span">${c.P_Max === 5 ? 'P5_22233 (5 parcelles : 2-2-2-3-3)' : 'P4_2233 (4 parcelles : 2-2-3-3)'} = ${totalArbres} Arbres debout</span></li>
-                <li>• <strong>Mode de Pièges (Axe 10) :</strong> <span class="dyn-span">${isEmbuscade ? 'Embuscade Assistée (Parade auto si Défense ≥ 1)' : 'Amortisseur de Dégâts (-1 Arbre coupé / 0 Souche terrassée)'}</span></li>
-                <li>• <strong>Écarts aux axes par défaut :</strong> ${modifiedAxes.length === 0 ? '<span class="text-emerald-700 font-semibold">Aucun (Règle Standard v5.3)</span>' : modifiedAxes.map(a => `<span class="px-1.5 py-0.5 bg-amber-100 text-amber-900 rounded font-mono">${a.key}=${c[a.key]}</span>`).join(' ')}</li>
-              </ul>
-            </div>
-            <div class="border-t md:border-t-0 md:border-l border-slate-200 pt-2 md:pt-0 md:pl-4">
-              <div class="font-bold text-amber-900 uppercase tracking-wider mb-1">🔄 Repères d’évolution (v4.3 / v5.1 → v5.2) :</div>
-              <ul class="space-y-1 text-slate-600">
-                <li>• <strong>Machines (v5.1+) :</strong> L'Abatteuse coupe jusqu'à <strong>2 Arbres</strong> ; le Bulldozer coupe <strong>1 Arbre</strong> puis terrasse toutes les Souches.</li>
-                <li>• <strong>Pièges (v5.2) :</strong> Fin de l'auto-parade sur parcelle vide sans condition ; application du mode <em>${isEmbuscade ? 'Embuscade Assistée' : 'Amortisseur'}</em>.</li>
-                <li>• <strong>Fin de piste (v4.9+) :</strong> Toute machine sur la dernière parcelle non rasée passe en <strong>Siège T4</strong> irréversible ; une parcelle rasée devient une <strong>Route Forestière</strong>.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- =============================================================== -->
-        <!-- SECTION 1 : VISION D'ENSEMBLE & BUT DU JEU                      -->
-        <!-- =============================================================== -->
-        <section id="sec-vision" class="mb-9">
-          <h2 class="text-2xl font-bold text-forest-900 border-b-2 border-forest-200 pb-1.5 mb-3">
-            1. VISION D’ENSEMBLE & BUT DU JEU
-          </h2>
-          <p class="mb-3">
-            Au bord de la forêt amazonienne, le chantier se met en marche. Sur chaque parcelle où leur frappe n'est pas parée, les <strong>Abatteuses</strong> coupent jusqu'à <strong>2 Arbres debout</strong> pour les transformer en Souches. Derrière elles, les <strong>Bulldozers</strong> coupent jusqu'à <strong>1 Arbre debout</strong> en Souche, puis arrachent toutes les Souches non protégées. Lorsqu'une parcelle n'a plus ni Arbre ni Souche, elle devient une <strong>Route Forestière</strong> définitivement rasée.
-          </p>
-          <p class="mb-4">
-            Vous incarnez les Peuples de la Forêt présents autour de la table : <span class="dyn-span">${state.peuplesCercle.map(p => `${PEUPLES[p].nom} (${p})`).join(', ')}</span>. À chaque tour, chacun découvre en secret derrière son mini-paravent une partie du plan du Contremaître. Sans jamais pouvoir parler de vos tirages secrets, vous devez coordonner vos deux Défenseurs en silence pour parer les machines, tendre des pièges en furtivité, saboter le chantier et bâtir un moteur coopératif avec vos voisins immédiats.
-          </p>
-
-          <div class="bg-forest-50 border-l-4 border-forest-700 p-4 rounded-r-xl">
-            <h3 class="font-bold text-forest-950 text-base uppercase tracking-wide mb-1">
-              Un But Unique : Arrêter le Chantier et Sauver les Arbres
-            </h3>
-            <p class="text-sm text-slate-700 mb-2">
-              Quel que soit le déroulement de la partie, l'objectif de l'équipe est unique : <strong>maximiser le nombre d'Arbres debout sur le plateau après la phase finale de repousse des Souches</strong> (sur un capital initial de <span class="dyn-span">${totalArbres} Arbres</span>). <strong>Vérification Unique en fin d'Étape 5.3</strong> (aucun arrêt immédiat en 3.1, 3.2 ou 4.x) — à la toute fin de 5.3, si l'une des 3 conditions suivantes est vraie, passez immédiatement à la Repousse Finale sans jouer l'Étape 6 :
-            </p>
-            <ol class="list-decimal list-inside text-sm space-y-1 text-slate-800 font-medium">
-              <li><strong>Fin du contrat (Limite de temps) :</strong> À l'issue du 8<sup>e</sup> tour de jeu.</li>
-              <li><strong>Réveil de la Forêt (Synchronisation Active en fin de 5.3) :</strong> Au moins <span class="dyn-span">${n === 6 ? 5 : Math.max(3, Math.min(n, gardiensDispoCount))} Gardiens sur la piste portent leur marqueur « utilisé »</span> (ont été ouverts ce tour-ci).</li>
-              <li><strong>Sommeil du Contremaître (Arrêt par le Rêve) :</strong> Dès qu'une tuile Rêve atteint le <strong>Rang 1</strong> (tout à gauche) de la Piste des Tactiques.</li>
-            </ol>
-          </div>
-        </section>
-
-        <!-- =============================================================== -->
-        <!-- SECTION 2 : TOPOLOGIE DU PLATEAU, MISE EN PLACE & TUILES EN JEU -->
-        <!-- =============================================================== -->
-        <section id="sec-topologie" class="mb-9">
-          <h2 class="text-2xl font-bold text-forest-900 border-b-2 border-forest-200 pb-1.5 mb-3">
-            2. TOPOLOGIE DU PLATEAU & MISE EN PLACE DE CETTE PARTIE
-          </h2>
-
-          <h3 class="text-lg font-bold text-forest-800 mt-4 mb-2">2.1. La Roue de la Forêt (Rayons et Lisières)</h3>
-          <p class="text-sm mb-2">
-            Le plateau central s'organise comme les rayons d'une roue convergeant de la périphérie extérieure vers le cœur de la forêt au centre. Pour votre table de <span class="dyn-span">${n} joueurs</span>, on alterne strictement :
-          </p>
-          <ul class="list-disc list-inside text-sm space-y-1.5 mb-4">
-            <li>
-              <strong><span class="dyn-span">${n} pistes Forêt</span> (une par Peuple en jeu) :</strong> chaque piste est composée d'une file de <span class="dyn-span">${c.P_Max} parcelles</span> numérotées depuis le bord extérieur (p=1 jusqu'à la parcelle centrale <span class="dyn-span">p=${c.P_Max}</span>). Dans toute la règle, <em>« devant »</em> désigne la prochaine parcelle non rasée du même rayon vers le centre.
-            </li>
-            <li>
-              <strong><span class="dyn-span">${n} pistes Furtivité intercalées</span> (les Lisières) :</strong> chaque piste Furtivité sépare deux voisins X et Y. À chaque profondeur (p=1 à <span class="dyn-span">${c.P_Max}</span>), une case Furtivité fait face à deux parcelles Forêt (gauche et droite). En bordure extérieure de chaque lisière figurent <strong>2 emplacements de Tuiles de Synergie</strong>.
-            </li>
-          </ul>
-
-          <h3 class="text-lg font-bold text-forest-800 mt-4 mb-2">2.2. Installation de la Forêt, du Contremaître et des Joueurs</h3>
-          <ul class="list-disc list-inside text-sm space-y-1.5 mb-5">
-            <li>
-              <strong>La Forêt et les Machines :</strong> Posez les Arbres debout selon la dotation et le <strong>Seuil Imprimé</strong> de la topologie <span class="dyn-span">${c.P_Max === 5 ? 'P5_22233 (p1=2, p2=2, p3=2, p4=3, p5=3)' : 'P4_2233 (p1=2, p2=2, p3=3, p4=3)'}</span>, soit <span class="dyn-span">${totalArbres} Arbres debout</span> au total. Placez 1 Abatteuse et 1 Bulldozer ensemble sur la première parcelle (p=1) de chaque piste Forêt, sans jeton Puissance. Gardez les tuiles Route Forestière à proximité.
-            </li>
-            <li>
-              <strong>Le Paquet des Machines :</strong> Formez un paquet mélangé avec exactement 1 carte par machine en jeu (soit <span class="dyn-span">${2 * n} cartes Machine</span>). Gardez la réserve de cartes Sabotage à proximité.
-            </li>
-            <li>
-              <strong>La Piste des Tactiques (Le Cerveau du Contremaître) :</strong> <span class="dyn-span">${c.Mise_En_Place_Tactiques === 'ORDRE_FIXE_T1_T6' ? 'Alignez les 6 tuiles Tactique face visible dans l’<strong>ordre strict croissant de gauche à droite</strong> : <code>T1</code> au Rang 1, <code>T2</code> au Rang 2, <code>T3</code> au Rang 3, <code>T4</code> au Rang 4, <code>T5</code> au Rang 5 et <code>T6</code> au Rang 6.' : 'Mélangez aléatoirement les 6 tuiles Tactique (<code>T1</code> à <code>T6</code>) et alignez-les face visible des Rangs 1 à 6.'}</span>
-            </li>
-            <li>
-              <strong>Matériel individuel :</strong> Chaque joueur prend 1 Plateau Personnel à Mini-Paravent, ses 2 dés (2D6), son jeu de 6 cartes Tactique (<code>T1–T6</code>) et ses <strong>2 jetons Défenseurs différenciés</strong> : le <em>Premier Défenseur</em> (1 face définitive) et le <em>Deuxième Défenseur</em> (double-face : <em>« en réflexion »</em> / <em>« définitive »</em>).
-            </li>
-          </ul>
-
-          <h3 class="text-lg font-bold text-forest-800 mt-5 mb-2">
-            2.3. Les <span class="dyn-span">${2 * n} Tuiles de Synergie</span> de votre partie (Mise en place sans tirage aléatoire)
-          </h3>
-          <p class="text-sm mb-3">
-            Pour chaque lisière séparant deux voisins autour de la table, placez face visible les 2 tuiles symétriques (X,Y) et (Y,X) ci-dessous (les Gardiens à 2 faces démarrent sur leur <strong>Face 1</strong>) :
-          </p>
-
-          <!-- Tableau directement compilé pour la table active -->
-          <div class="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-            <table class="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr class="bg-forest-900 text-white">
-                  <th class="p-2.5 border-r border-forest-700">Lisière</th>
-                  <th class="p-2.5 border-r border-forest-700">Code & Couple</th>
-                  <th class="p-2.5 border-r border-forest-700">Nom de la Tuile & Support</th>
-                  <th class="p-2.5 border-r border-forest-700">Profil retenu</th>
-                  <th class="p-2.5">Effet en jeu pour cette partie</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-200">
-                ${lisieres.map(l => l.tuiles.map((tId, idx) => {
-                  const t = CATALOGUE_TUILES[tId];
-                  const pLetter = state.profileOverrides[tId] || 'A';
-                  const prof = t.profils[pLetter];
-                  const famBadge = t.famille === 'GARDIEN'
-                    ? 'bg-amber-100 text-amber-900'
-                    : (t.famille === 'REVE' ? 'bg-purple-100 text-purple-900' : 'bg-lime-100 text-lime-900');
-                  return `
-                    <tr class="hover:bg-slate-50">
-                      ${idx === 0 ? `<td rowspan="2" class="p-2.5 font-bold bg-slate-50 border-r border-slate-200 align-middle whitespace-nowrap">Lisière ${l.index}<br><span class="text-forest-700">${PEUPLES[l.p1].icon} ${l.p1} ↔ ${PEUPLES[l.p2].icon} ${l.p2}</span></td>` : ''}
-                      <td class="p-2.5 font-mono font-bold border-r border-slate-200 whitespace-nowrap">
-                        ${tId} <span class="text-slate-500">(${t.couple.join(',')})</span>
-                      </td>
-                      <td class="p-2.5 border-r border-slate-200">
-                        <div class="font-bold text-slate-900">${prof.nom}</div>
-                        <span class="inline-block mt-0.5 px-1.5 py-0.2 rounded text-[10px] font-semibold ${famBadge}">${t.famille} · ${prof.cycle}</span>
-                      </td>
-                      <td class="p-2.5 font-mono font-bold text-center border-r border-slate-200">
-                        <span class="px-2 py-0.5 rounded bg-forest-100 text-forest-900 border border-forest-300">Profil ${pLetter}</span>
-                      </td>
-                      <td class="p-2.5 text-slate-700 leading-snug">${prof.texte}</td>
-                    </tr>
-                  `;
-                }).join('')).join('')}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- =============================================================== -->
-        <!-- SECTION 3 : DÉROULEMENT D'UN TOUR DE JEU (6 ÉTAPES)             -->
-        <!-- =============================================================== -->
-        <section id="sec-tour" class="mb-9 page-break">
-          <h2 class="text-2xl font-bold text-forest-900 border-b-2 border-forest-200 pb-1.5 mb-4">
-            3. DÉROULEMENT DÉTAILLÉ D’UN TOUR DE JEU (6 ÉTAPES)
-          </h2>
-
-          <!-- ÉTAPE 1 -->
-          <div class="mb-6">
-            <h3 class="text-lg font-bold text-forest-800 mb-1.5">
-              Étape 1 : Identifiez les machines en Siège (<code>T4</code>) & Découvrez votre part du plan
-            </h3>
-            <ol class="list-decimal list-inside text-sm space-y-1.5">
-              <li>
-                <strong>Machines en Siège (<code>T4</code>) avant distribution :</strong> Toute machine qui se trouve déjà sur la <strong>dernière parcelle non rasée de son rayon</strong> (<span class="dyn-span">p=${c.P_Max} initialement</span>) est en <strong>siège</strong> irréversible jusqu'à la fin de la partie. Posez sa carte Machine face visible directement sur sa parcelle avec le rappel <code>T4</code> : elle attaquera automatiquement sur place à l'Étape 5.
-              </li>
-              <li>
-                <strong>Distribution secrète du paquet restant :</strong> Distribuez 1 carte face cachée à chaque joueur depuis le paquet des cartes Machine restantes (incluant les cartes Sabotage accumulées). Écartez le reste sans le consulter.
-              </li>
-              <li>
-                <strong>Lancer des dés sous le mini-paravent :</strong> Chaque joueur ayant reçu une carte lance ses 2 dés derrière son paravent, retient le plus petit résultat <span class="dyn-span">M = min(D1, D2)</span> (sauf Loi active autorisant max) et le pose sur la piste graduée 1 à 6 de son plateau personnel :
-                <ul class="list-disc list-inside ml-5 mt-1 space-y-1 text-slate-700">
-                  <li>Si vous avez une carte Machine et que le rang M sur la piste centrale contient une tuile Tactique (<code>T1</code> à <code>T6</code>), posez la carte Tactique correspondante face cachée derrière votre paravent.</li>
-                  <li>Si vous avez reçu une <strong>carte Sabotage</strong> OU si le rang M contient une <strong>tuile Rêve</strong>, ne sélectionnez aucune carte Tactique derrière votre paravent.</li>
-                </ul>
-              </li>
-            </ol>
-
-            <!-- Tableau des 6 Tactiques -->
-            <div class="overflow-x-auto rounded-xl border border-slate-200 mt-3">
-              <table class="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr class="bg-slate-800 text-white">
-                    <th class="p-2 border-r border-slate-600">Tactique</th>
-                    <th class="p-2 border-r border-slate-600">Cibles et mouvement de la machine (Abatteuse coupe 2 Arbres / Bulldozer coupe 1 Arbre + terrasse Souches)</th>
-                    <th class="p-2">Modificateur de Parade</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-200">
-                  <tr>
-                    <td class="p-2 font-bold font-mono">T1. Sur place</td>
-                    <td class="p-2">Frappe sa parcelle actuelle (p) et y reste.</td>
-                    <td class="p-2 font-mono">Modificateur 0</td>
-                  </tr>
-                  <tr class="bg-slate-50">
-                    <td class="p-2 font-bold font-mono">T2. Devant</td>
-                    <td class="p-2">Frappe la parcelle devant elle (p+1) et reste sur sa parcelle (p).</td>
-                    <td class="p-2 font-mono">Modificateur 0</td>
-                  </tr>
-                  <tr>
-                    <td class="p-2 font-bold font-mono">T3. En avançant</td>
-                    <td class="p-2">Frappe sa parcelle (p) <strong>ET</strong> celle de devant (p+1), puis avance en p+1 en 5.3.</td>
-                    <td class="p-2 font-mono text-emerald-700 font-semibold">-1 défenseur requis / parcelle</td>
-                  </tr>
-                  <tr class="bg-slate-50">
-                    <td class="p-2 font-bold font-mono">T4. Sur place +</td>
-                    <td class="p-2">Comme T1. En 5.3, la machine gagne <strong>+1 jeton Puissance rouge</strong>. <em>(Tactique fixe des machines en Siège)</em>.</td>
-                    <td class="p-2 font-mono text-emerald-700 font-semibold">-1 défenseur requis</td>
-                  </tr>
-                  <tr>
-                    <td class="p-2 font-bold font-mono">T5. Devant +</td>
-                    <td class="p-2">Comme T2. En 5.3, la machine gagne <strong>+1 jeton Puissance rouge</strong>.</td>
-                    <td class="p-2 font-mono text-emerald-700 font-semibold">-1 défenseur requis</td>
-                  </tr>
-                  <tr class="bg-slate-50">
-                    <td class="p-2 font-bold font-mono">T6. En avançant +</td>
-                    <td class="p-2">Comme T3. En 5.3, la machine gagne <strong>+1 jeton Puissance rouge</strong>.</td>
-                    <td class="p-2 font-mono text-emerald-700 font-semibold">-2 défenseurs requis / parcelle</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- ÉTAPE 2 -->
-          <div class="mb-6">
-            <h3 class="text-lg font-bold text-forest-800 mb-1.5">
-              Étape 2 : Placez vos Défenseurs en silence (Programmation muette)
-            </h3>
-            <p class="text-sm mb-2">
-              Toute communication verbale, signe convenu ou va-et-vient codé est interdit. Le placement s'effectue en deux sous-phases :
-            </p>
-            <ol class="list-decimal list-inside text-sm space-y-1.5">
-              <li>
-                <strong>Le 1<sup>er</sup> Défenseur vous engage (Ancrage local) :</strong> Chacun pose son Premier Défenseur (face unique définitive) uniquement sur sa propre piste Forêt (parcelle non rasée), sa piste Furtivité de gauche ou sa piste Furtivité de droite (case Furtivité ou emplacement de Tuile). <em>Si votre piste Forêt est entièrement rasée, vous devez le poser sur l'une de vos deux pistes Furtivité.</em> Ce choix est public et irrévocable.
-              </li>
-              <li>
-                <strong>Le 2<sup>e</sup> Défenseur vient en soutien (Portée globale) :</strong> Dès que tous les Premiers Défenseurs sont posés, chacun place son Deuxième Défenseur sur n'importe quelle parcelle non rasée, case Furtivité ou Tuile de Synergie du plateau, sur sa face <em>« en réflexion »</em>. En observant les hésitations du groupe, vous pouvez le déplacer vers une autre action envisagée. Quand votre choix est arrêté, retournez-le sur sa face <em>« définitive »</em>.
-              </li>
-            </ol>
-          </div>
-
-          <!-- ÉTAPE 3 -->
-          <div class="mb-6">
-            <h3 class="text-lg font-bold text-forest-800 mb-1.5">
-              Étape 3 : Mettez en jeu les Tuiles construites & Révélez le plan
-            </h3>
-            <ol class="list-decimal list-inside text-sm space-y-1.5">
-              <li>
-                <strong>3.1. Construction immédiate des Tuiles de Synergie :</strong> Avant d'ouvrir les paravents, toute Tuile en bordure de lisière qui accueille <strong>2 Défenseurs</strong> est immédiatement mise en jeu sur son support (voir Section 4) et prend effet dès ce tour !
-                <ul class="list-disc list-inside ml-5 mt-1 text-slate-700 space-y-0.5">
-                  <li>Pour un <strong>Gardien (G)</strong> ou un <strong>Rêve (R)</strong> : les constructeurs restent en bordure de lisière <span class="dyn-span">${n === 3 ? '(Coup de pouce N=3 actif : 1 des 2 Défenseurs constructeurs rejoint gratuitement la parcelle p=1 adjacente non rasée !)' : '(à N=3 joueurs uniquement, 1 des 2 constructeurs rejoint gratuitement p=1)'}</span>.</li>
-                  <li>Pour un <strong>Nid de Croissance (M)</strong> : posez le Nid sur une parcelle non rasée et sans machine de la piste Forêt des Insectes ou du voisin associé ; <strong>les 2 Défenseurs constructeurs accompagnent immédiatement le Nid sur cette parcelle Forêt</strong> (ils l'activeront en 4.2 et défendront la parcelle en 5 !).</li>
-                </ul>
-              </li>
-              <li>
-                <strong>3.2. Ouverture des mini-paravents & Révélation :</strong> Figez l'état de la Piste des Tactiques, puis ouvrez tous les paravents simultanément :
-                <ul class="list-disc list-inside ml-5 mt-1 text-slate-700 space-y-1">
-                  <li><strong>Carte Sabotage :</strong> remettez-la dans la réserve (sauf Loi la conservant dans la pile mise de côté).</li>
-                  <li>
-                    <strong>Rang occupé par une tuile Rêve :</strong> l'attaque de votre machine est <strong>annulée</strong> ! Mettez la carte Machine de côté. <span class="dyn-span">${c.Regle_Ouverture_Reve_Multiple === 'UNIQUE_PAR_TOUR' ? 'Chaque tuile Rêve désignée par au moins un dé M ouvre son Slot d’effet et avance d’1 rang vers la gauche <strong>une seule fois ce tour-ci</strong> (du rang le plus à gauche au plus à droite).' : 'Chaque carte Machine annulée ouvre le Slot du Rêve qu’elle désigne et le fait avancer d’1 rang vers la gauche (<strong>mode cumulatif</strong>, dans l’ordre de distribution).'}</span>
-                  </li>
-                  <li><strong>Sinon :</strong> posez votre paire Machine + Tactique en bord de piste face à la ou aux parcelles ciblées.</li>
-                </ul>
-              </li>
-            </ol>
-          </div>
-
-          <!-- ÉTAPE 4 -->
-          <div class="mb-6">
-            <h3 class="text-lg font-bold text-forest-800 mb-1.5">
-              Étape 4 : Faites agir la Furtivité, les Nids de Croissance et la Migration des Insectes
-            </h3>
-            <ol class="list-decimal list-inside text-sm space-y-1.5">
-              <li>
-                <strong>4.1. Actions des binômes en Furtivité :</strong> Sur chaque case Furtivité, <strong>2 Défenseurs</strong> (ou <code>1 Défenseur + 1 Insecte</code> défaussé) forment un binôme actif (1 activation max par case et par tour). Observez les deux parcelles Forêt non rasées directement en face (gauche et droite) :
-                <ul class="list-disc list-inside ml-5 mt-1 text-slate-700 space-y-0.5">
-                  <li><strong>Préparer un Piège :</strong> sur chaque parcelle en face qui est <strong>sans machine physiquement présente</strong> (même si cette parcelle est ciblée à distance par T2/T3/T5/T6 ce tour-ci), posez 1 jeton Piège (max 1 par parcelle ; allume le Déclencheur <em>2. Piégeage</em>).</li>
-                  <li><strong>Saboter le chantier :</strong> pour chaque parcelle en face contenant <strong>au moins une machine mais aucune machine active ce tour-ci</strong> (une machine en siège T4 est active), gagnez 1 carte Sabotage placée sur la pile mise de côté (max 1 par parcelle ; allume le Déclencheur <em>3. Sabotage</em>).</li>
-                </ul>
-              </li>
-              <li>
-                <strong>4.2. Activation des Nids de Croissance :</strong> Tout Nid en forêt sur lequel se trouve au moins 1 Défenseur s'active : il produit <strong>+1 Insecte</strong> (s'il y en a 0 ou 1 sur la parcelle) ou <strong>+2 Insectes</strong> (s'il y en a déjà ≥ 2), allume le Déclencheur <em>6. Insecte</em>, puis résout son pouvoir symbiotique. Le Défenseur reste en place pour l'Étape 5.
-              </li>
-              <li>
-                <strong>4.3. Déplacement et Migration des Insectes :</strong> Chaque jeton Insecte sur la roue peut se déplacer d'<strong>1 cran</strong> (le long de son rayon en sautant les Routes Forestières, ou latéralement Forêt ↔ Furtivité à même profondeur). Depuis la <strong>dernière parcelle non rasée d'un rayon</strong>, un Insecte peut utiliser son cran pour migrer vers l'une des deux pistes globales :
-                <ul class="list-disc list-inside ml-5 mt-1 text-slate-700 space-y-0.5">
-                  <li><strong>Bug du Cerveau (Piste des Tactiques) :</strong> <span class="dyn-span">${CATALOGUE_TUILES.SLOT_BUG_CERVEAU.profils[state.slotsInsectes.SLOT_BUG_CERVEAU].texte}</span></li>
-                  <li><strong>Colonisation des Gardiens (Piste des Gardiens) :</strong> <span class="dyn-span">${CATALOGUE_TUILES.SLOT_COLONISATION_GARDIENS.profils[state.slotsInsectes.SLOT_COLONISATION_GARDIENS].texte}</span></li>
-                </ul>
-              </li>
-            </ol>
-          </div>
-
-          <!-- ÉTAPE 5 -->
-          <div class="mb-6">
-            <h3 class="text-lg font-bold text-forest-800 mb-1.5">
-              Étape 5 : Résolvez les Attaques des Machines
-            </h3>
-
-            <!-- Encadré dynamique de résolution des Pièges (Axe 10) -->
-            <div class="dyn-block mb-3 text-sm">
-              ${isEmbuscade ? `
-                <div class="font-bold text-forest-950 mb-1">🪤 Règle des Pièges dans cette partie : Mode « Embuscade Assistée » (Axe 10 = EXIGE_PRESENCE_LOCALE)</div>
-                <p class="text-slate-800">
-                  Lorsqu'une parcelle ciblée contient un jeton Piège <strong>ET dispose d'au moins 1 point de Défense à l'instant de la frappe</strong> (1 Défenseur local, 1 Insecte local ou un soutien à distance autorisé), le Piège <strong>pare automatiquement la frappe</strong> quel que soit le Seuil de Parade de la machine ! Cette Parade n'engage aucun Insecte et allume le Déclencheur <em>1. Parade</em>. Le Piège ainsi déclenché reste actif pour les frappes suivantes de ce tour (tant qu'au moins 1 point de Défense est présent), puis sera retiré en 5.3. <em>Si la Défense est de 0 au moment de la frappe, le Piège ne se déclenche pas et reste intact sur la parcelle.</em>
-                </p>
-              ` : `
-                <div class="font-bold text-amber-950 mb-1">🛡️ Règle des Pièges dans cette partie : Mode « Amortisseur de Dégâts » (Axe 10 = AMORTISSEUR_SANS_PARADE)</div>
-                <p class="text-slate-800">
-                  Un jeton Piège ne fournit aucune Parade automatique. Vérifiez d'abord si vos Défenseurs et Insectes réussissent une Parade classique (auquel cas la frappe est parée et le Piège reste intact). <strong>Si la frappe n'est pas parée</strong>, le Piège s'interpose automatiquement (même sans aucun Défenseur ni Insecte sur la parcelle) :<br>
-                  • Contre une <strong>Abatteuse</strong> : il réduit sa coupe effective de <strong>-1 Arbre</strong> (elle coupe donc 1 Arbre s'il y en a 2 ou 3, et <strong>0 Arbre</strong> s'il n'en reste qu'1 seul).<br>
-                  • Contre un <strong>Bulldozer</strong> : le Bulldozer coupe normalement jusqu'à 1 Arbre, mais le Piège <strong>empêche tout terrassement de Souches (0 Souche retirée)</strong>.<br>
-                  <em>Une frappe amortie n'allume pas le Déclencheur 1. Parade. Le Piège n'est engagé (puis retiré en 5.3) que s'il a effectivement réduit la perte d'au moins un Arbre ou une Souche.</em>
-                </p>
-              `}
-            </div>
-
-            <p class="text-sm mb-2">
-              <strong>Calcul du Seuil de Parade classique :</strong> Sur chaque parcelle ciblée, chaque Défenseur et chaque Insecte présent apporte <strong>+1 en Défense</strong>. Pour parer une machine sans Piège Embuscade, votre Défense doit atteindre le Seuil :
-            </p>
-            <div class="bg-slate-900 text-emerald-300 font-mono text-xs p-3 rounded-xl mb-3 text-center">
-              Seuil = max(1, Seuil_Imprimé(p) [${c.P_Max === 5 ? '2,2,2,3,3' : '2,2,3,3'}]${c.Offset_Seuil_Parade === 1 ? ' + 1 (Offset)' : ''} + Rouges${c.Synergie_Binome_Machines === 'MUTUALISATION_PUISSANCE_MEME_PARCELLE' ? ' (mutualisés)' : ''} − Bleus + Mod_Tactique + Mod_Tuiles)
-            </div>
-
-            <p class="text-sm font-semibold text-slate-800 mb-1">Séquence de résolution en 3 sous-étapes (5.1 → 5.2 → 5.3) :</p>
-            <ol class="list-decimal list-inside text-sm space-y-1.5">
-              <li>
-                <strong>5.1. Résolvez toutes les Abatteuses :</strong> Sur chaque parcelle ciblée non parée, l'Abatteuse retourne <strong>jusqu'à 2 Arbres debout sur leur face Souche</strong> (2 s'il y en a ≥ 2, 1 s'il n'en reste qu'1${isEmbuscade ? '' : ', réduit de -1 si amorti par un Piège'}). <span class="dyn-span">${c.Role_Abatteuse_Fin_De_Piste === 'ARRACHE_1_SOUCHE_SI_SANS_ARBRE' ? '<em>(Variante Axe 7 active : si une Abatteuse en Siège T4 frappe une parcelle sans aucun Arbre debout, elle arrache 1 Souche).</em>' : 'S’il n’y a plus d’Arbre debout, elle frappe à vide.'}</span>
-              </li>
-              <li>
-                <strong>5.2. Résolvez tous les Bulldozers & les Routes Forestières :</strong> Sur chaque parcelle ciblée non parée (1 seule vérification de Parade avant la coupe), le Bulldozer <strong>coupe jusqu'à 1 Arbre debout en Souche, puis retire toutes les Souches non protégées</strong>.
-                <ul class="list-disc list-inside ml-5 mt-1 text-slate-700 space-y-0.5">
-                  <li><strong>Route Forestière :</strong> Si une parcelle n'a plus ni Arbre ni Souche, recouvrez-la d'une tuile Route Forestière (tout Nid retourne en lisière, Pièges et Insectes sont défaussés, les Défenseurs sont rendus à leurs joueurs). Les machines présentes reculent d'1 parcelle non rasée vers la bordure (ou glissent vers le centre si la bordure est rasée). Pour le reste de la partie, machines et Insectes sautent par-dessus les Routes Forestières.</li>
-                  <li><strong>Frappe sur cible rasée :</strong> Toute frappe ultérieure dont la cible vient d'être rasée est annulée sans report.</li>
-                </ul>
-              </li>
-              <li>
-                <strong>5.3. Retraits, Avancées (<code>T3/T6</code>), Puissance (<code>T4–T6</code>) & Entrée en Siège :</strong>
-                <ul class="list-disc list-inside ml-5 mt-1 text-slate-700 space-y-0.5">
-                  <li><strong>Verrouillage Étape 5 (Zéro dette d'Insectes) :</strong> Dès le début de l'Étape 5 et jusqu'à la fin de 5.3, les Insectes et Pièges situés sur des parcelles ciblées ne peuvent ni bouger ni payer de coût d'ouverture. En 5.3, retirez les Pièges déclenchés et les Insectes ayant servi en Parade classique.</li>
-                  <li>Avancez d'1 parcelle non rasée vers le centre toutes les machines ayant joué <code>T3</code> ou <code>T6</code>. Si une machine entre sur une parcelle contenant un Nid, ce Nid est détruit par contact (retour en lisière et Insectes défaussés, sauf Loi de protection).</li>
-                  <li>Ajoutez <strong>+1 jeton Puissance face rouge</strong> sur chaque machine ayant exécuté <code>T4</code>, <code>T5</code> ou <code>T6</code>.</li>
-                  <li><strong>Entrée en Siège (<code>T4</code>) :</strong> Toute machine qui se trouve désormais sur la <span class="dyn-span">${c.Declenchement_Fin_De_Piste === 'ARRIVEE_DERNIERE_PARCELLE' ? 'dernière parcelle non rasée de son rayon' : 'case de dépassement au-delà de la dernière parcelle'}</span> entre irréversiblement en <strong>Siège</strong> : laissez sa carte Machine sur sa parcelle avec un rappel <code>T4</code> pour les tours suivants.</li>
-                </ul>
-              </li>
-            </ol>
-          </div>
-
-          <!-- ÉTAPE 6 -->
-          <div>
-            <h3 class="text-lg font-bold text-forest-800 mb-1.5">
-              Étape 6 : Faites apprendre le Contremaître & Préparez le tour suivant
-            </h3>
-            <ol class="list-decimal list-inside text-sm space-y-1.5">
-              <li>
-                <strong>6.1. Décompte de l'Apprentissage :</strong> Pour chaque machine active ce tour-ci, comptez les jetons Apprentissage qu'elle rapporte à la tuile Tactique qu'elle a exécutée :
-                <ul class="list-disc list-inside ml-5 mt-1 text-slate-700 space-y-0.5">
-                  <li><strong>+1 jeton par parcelle endommagée</strong> (ayant perdu au moins 1 Arbre ou 1 Souche lors de cette attaque).</li>
-                  <li><strong>+1 jeton par Puissance acquise</strong> en 5.3 grâce à <code>T4</code>, <code>T5</code> ou <code>T6</code> (même si la frappe a été parée).</li>
-                  <li><strong>Déduction de Surchauffe (jetons bleus) :</strong> réduisez la contribution de cette machine de <strong>-1 par jeton bleu</strong> qu'elle porte (minimum 0 par machine). Appliquez ensuite les retraits de Slots et de Bugs.</li>
-                </ul>
-              </li>
-              <li>
-                <strong>6.2. Avancée sur la Piste des Tactiques :</strong> Si une tuile Tactique est <strong>strictement seule en tête</strong> en nombre de jetons Apprentissage, échangez-la avec sa voisine de gauche (Rang r → r−1, y compris si cette voisine est un Rêve). Retirez ensuite tous les jetons Apprentissage.
-              </li>
-              <li>
-                <strong>6.3. Remise à zéro et mélange :</strong> Récupérez vos 2 Défenseurs, effacez les marques <em>« utilisé »</em> des Gardiens, et mélangez toutes les cartes Machine (hors machines en Siège <code>T4</code>) avec les cartes Sabotage mises de côté pour former le paquet du tour suivant.
-              </li>
-            </ol>
-          </div>
-        </section>
-
-        <!-- =============================================================== -->
-        <!-- SECTION 4 : FONCTIONNEMENT DES 3 SUPPORTS D'ASYMÉTRIE           -->
-        <!-- =============================================================== -->
-        <section id="sec-supports" class="mb-9">
-          <h2 class="text-2xl font-bold text-forest-900 border-b-2 border-forest-200 pb-1.5 mb-3">
-            4. FONCTIONNEMENT DES 3 SUPPORTS D’ASYMÉTRIE
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-            <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-200">
-              <h3 class="font-bold text-amber-950 text-sm mb-1.5">4.1. La Piste des Gardiens (Tuiles G)</h3>
-              <p class="text-slate-700 mb-2">
-                Comporte 6 cases fixes associées aux 6 Déclencheurs : <strong>1. Parade, 2. Piégeage, 3. Sabotage, 4. Gardien (Résonance), 5. Rêve, 6. Insecte</strong>.
-              </p>
-              <p class="text-slate-700">
-                Lorsqu'un Gardien est construit en 3.1, branchez-le sur une case libre autorisée. Dès que cet événement se produit, le Gardien ouvre son Slot (<strong>max 1 fois par tour</strong>). Pour un Gardien évolutif à 2 faces, vous pouvez choisir de le retourner sur sa Face 2 au lieu de résoudre sa Face 1.
-              </p>
-            </div>
-            <div class="p-4 rounded-xl bg-purple-50/70 border border-purple-200">
-              <h3 class="font-bold text-purple-950 text-sm mb-1.5">4.2. Le Cerveau du Rêve (Tuiles R)</h3>
-              <p class="text-slate-700 mb-2">
-                Lorsqu'un Rêve est construit en 3.1, il entre au <strong>Rang 6</strong> (tout à droite) de la Piste des Tactiques : éjectez définitivement la tuile Tactique la plus à droite encore en jeu et décalez d'1 rang vers la gauche les Rêves situés à sa droite.
-              </p>
-              <p class="text-slate-700">
-                En 3.2, tout dé M qui désigne un Rêve voit sa machine annulée, déclenche le pouvoir du Rêve et le fait avancer d'1 rang vers la gauche (r → r-1).
-              </p>
-            </div>
-            <div class="p-4 rounded-xl bg-lime-50/70 border border-lime-200">
-              <h3 class="font-bold text-lime-950 text-sm mb-1.5">4.3. Le Réseau de Croissance (Tuiles M)</h3>
-              <p class="text-slate-700 mb-2">
-                Fondé en 3.1 sur une parcelle non rasée et sans machine du rayon des Insectes ou du voisin associé (les 2 constructeurs suivent le Nid en forêt).
-              </p>
-              <p class="text-slate-700">
-                En 4.2, s'il y a au moins 1 Défenseur dessus, il produit ses Insectes (+1 ou +2) et active son Slot symbiotique. Les Insectes valent +1 en Parade, forment des binômes furtifs en 4.1 et migrent en 4.3.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- =============================================================== -->
-        <!-- SECTION 5 : FIN DU CHANTIER, REPOUSSE & SCORE D'ÉQUIPE          -->
-        <!-- =============================================================== -->
-        <section id="sec-fin">
-          <h2 class="text-2xl font-bold text-forest-900 border-b-2 border-forest-200 pb-1.5 mb-3">
-            5. FIN DU CHANTIER, REPOUSSE FINALE & SCORE D’ÉQUIPE
-          </h2>
-          <p class="text-sm mb-2">
-            Dès que le chantier s'arrête (à la fin du 8<sup>e</sup> tour, par le <em>Réveil de la Forêt</em> ou par le <em>Sommeil du Contremaître</em>), passez immédiatement à la <strong>Repousse finale</strong> :
-          </p>
-          <ul class="list-disc list-inside text-sm space-y-1.5 mb-3">
-            <li>
-              Sur chaque parcelle non rasée qui a conservé au moins une Souche, <strong>retournez 1 seule Souche sur sa face Arbre debout</strong> (une parcelle couverte d'une Route Forestière reste définitivement perdue).
-            </li>
-            ${hasR6C ? `<li class="dyn-span"><strong>Effet actif dans votre instance (R6 Profil C · La Terra Preta) :</strong> Si la tuile R6 est sur la Piste des Tactiques au moment de la Repousse, retournez jusqu'à <strong>2 Souches en Arbres debout</strong> sur chaque parcelle non rasée des Humains et des Insectes !</li>` : ''}
-            ${hasR8E ? `<li class="dyn-span"><strong>Effet actif dans votre instance (R8 Profil E · Le rêve des racines intactes) :</strong> Si la tuile R8 est sur la Piste des Tactiques au moment de la Repousse, sur chaque parcelle des Entités ou des Reptiles ne portant <strong>aucun Arbre debout</strong>, retournez <strong>toutes les Souches</strong> en Arbres debout !</li>` : ''}
-          </ul>
-          <p class="text-sm font-bold text-forest-950">
-            Comptez le nombre total d'Arbres debout sur l'ensemble de la roue (rapporté aux <span class="dyn-span">${totalArbres} Arbres initiaux</span>) : c'est le score final de votre équipe !
-          </p>
-        </section>
-      `;
-    }
+    // renderDidacticRulebook() est désormais fourni par data/livret_v5_3.js
 
     // -------------------------------------------------------------------------
     // 11. RENDU DE L'EXPLORATEUR DES 116 PROFILS (ONGLET 2)
@@ -1697,32 +1172,8 @@
       return { isUnfiltered, profileCount, selected };
     }
 
-// Socle formel compact des règles v5.3 transmis à chaque nouvelle session Gemini
-    const REGLES_COEUR_SYNTHESE = {
-      but_et_format: "Coopératif asymétrique à communication limitée (3 à 6 joueurs parmi M,R,O,H,E,I · max 8 tours). Objectif unique : maximiser le total d'Arbres debout après la Repousse Finale.",
-      topologie_et_seuils_imprimes: {
-        roue: "N pistes Forêt (rayons p=1 bordure vers p=P_Max centre) alternées avec N pistes Furtivité (lisières X↔Y portant chacune 2 emplacements de Tuiles de Synergie en bordure).",
-        P4_2233: "4 parcelles : arbres initiaux et Seuils Imprimés fixes [2, 2, 3, 3] (10×N arbres). Le seuil ne compte jamais les arbres ni les souches présents.",
-        P5_22233: "5 parcelles : arbres initiaux et Seuils Imprimés fixes [2, 2, 2, 3, 3] (12×N arbres).",
-        mise_en_place: "1 Abatteuse + 1 Bulldozer en p=1 sur chaque rayon (0 Puissance). Paquet = 2N cartes Machine. Piste Tactiques = T1..T6. 2N Tuiles de Synergie face visible (Gardiens double-face sur Face 1)."
-      },
-      sequence_tour_6_etapes: {
-        "1_siege_et_plan": "Machines déjà sur la dernière parcelle non rasée = Siège T4 irréversible (carte posée sur parcelle). Distribution 1 carte/joueur du paquet restant (incl. Sabotages). 2D6 sous paravent : M = min(D1,D2) désigne le rang sur la Piste Tactiques (T1: p mod 0 | T2: p+1 mod 0 | T3: p & p+1 mod -1, avance | T4: p mod -1, +1 Rouge | T5: p+1 mod -1, +1 Rouge | T6: p & p+1 mod -2, avance, +1 Rouge). Aucune Tactique choisie si carte Sabotage ou tuile Rêve au rang M.",
-        "2_defenseurs_muets": "1er Défenseur irrévocable sur sa piste Forêt ou ses 2 lisières adjacentes. Puis 2e Défenseur portée globale (face réflexion puis définitive).",
-        "3_1_construction": "Toute Tuile en lisière avec 2 Défenseurs entre en jeu dès ce tour. Gardien (G) -> case libre autorisée (1..6) ; Rêve (R) -> Rang 6 (éjecte la Tactique la plus à droite, décale les Rêves à gauche). Constructeurs G/R restent en lisière (Bonus N=3 joueurs : 1 des 2 constructeurs rejoint gratuitement p=1 adjacente non rasée). Nid (M) -> parcelle non rasée sans machine d'I ou du partenaire, les 2 constructeurs suivent le Nid en forêt.",
-        "3_2_revelation": "Ouverture simultanée des paravents. Sabotage -> réserve (sauf Loi). Dé M sur un Rêve -> machine annulée, ouvre le Rêve et l'avance r -> r-1 (UNIQUE_PAR_TOUR de gauche à droite, ou cumulatif selon axe).",
-        "4_1_furtivite": "Binôme actif par case Furtivité (2 Défenseurs ou 1 Défenseur + 1 Insecte défaussé, max 1/case/tour) sur les 2 parcelles non rasées en face : Pose 1 Piège si aucune machine physiquement présente (autorisé même si parcelle ciblée à distance en 3.2 ; max 1 Piège/parcelle ; Déclencheur 2) ; Gagne 1 Sabotage si >=1 machine présente et aucune active ce tour (Siège T4 = active ; Déclencheur 3).",
-        "4_2_nids": "Nid avec >=1 Défenseur produit +1 Insecte (si 0-1 présent) ou +2 Insectes (si >=2), allume Déclencheur 6 et résout son effet.",
-        "4_3_migration": "Chaque Insecte bouge d'1 cran (rayon en sautant les Routes Forestières, ou Forêt <-> Furtivité même profondeur). Depuis la dernière parcelle non rasée, migration possible vers Bug du Cerveau ou Colonisation des Gardiens.",
-        "5_attaques_et_verrouillage": "Verrouillage Zéro Dette d'Insectes : dès le début de l'Étape 5 jusqu'à fin 5.3, Insectes et Pièges sur parcelles ciblées ne peuvent ni bouger ni payer de coût. Piège (Embuscade Assistée v5.3) : si Piège + Défense >= 1 à la frappe -> Parade auto (0 Insecte engagé, Déclencheur 1, reste actif pour les frappes suivantes du tour tant que Déf >= 1, retiré en 5.3 ; si Déf = 0, Piège intact). Parade classique : Défense (Défenseurs + Insectes locaux) >= max(1, Seuil_Imprimé(p) + Offset + Rouges - Bleus + Mod_Tactique + Mod_Tuiles). 5.1 Abatteuses : coupent jusqu'à 2 Arbres en Souches. 5.2 Bulldozers : 1 test de parade, coupent jusqu'à 1 Arbre puis retirent toutes les Souches non protégées ; si 0 Arbre et 0 Souche -> Route Forestière (Nid en lisière, Pièges/Insectes défaussés, Défenseurs rendus, machines reculent d'1 parcelle vers la bordure ou glissent vers le centre ; frappes suivantes sur cette cible annulées). 5.3 : Retrait Pièges déclenchés et Insectes engagés en parade classique ; avancée T3/T6 (détruit Nid au contact sauf Loi) ; +1 Rouge sur T4/T5/T6 ; entrée en Siège T4 sur dernière parcelle non rasée.",
-        "5_3_fin_de_partie_unique": "Vérification UNIQUE en toute fin de 5.3 (jamais en 3.x ni 4.x). Si fin du Tour 8, OU Réveil de la Forêt (Gardiens marqués 'utilisé' ce tour >= seuil : 5 à N=6, sinon max(3, min(N, gardiensDispo)) selon axe), OU Sommeil du Contremaître (Rêve au Rang 1) -> sauter l'Étape 6 et passer à la Repousse Finale (1 Souche -> Arbre par parcelle non rasée ayant >=1 Souche, + bonus tuiles).",
-        "6_apprentissage": "6.1 Par machine active pour sa Tactique : +1/parcelle endommagée +1/Puissance rouge acquise en 5.3 -1/jeton bleu Surchauffe sur la machine (plancher 0/machine), puis retraits Bugs/Slots. 6.2 Tactique strictement seule en tête échange avec sa voisine de gauche (r -> r-1), raz jetons. 6.3 Récupération Défenseurs, raz marqueurs Gardiens, mélange paquet (hors Siège T4) + Sabotages."
-      },
-      supports_et_grammaire: {
-        declencheurs_gardiens_6: "1: Parade, 2: Piégeage, 3: Sabotage, 4: Gardien (Résonance), 5: Rêve, 6: Insecte. Max 1 ouverture/tour. Gardien double-face : peut retourner Face 1 -> Face 2 au lieu de résoudre Face 1.",
-        primitives_8: ["MOD_SEUIL", "CREATION_ENTITE", "DEPLACEMENT", "MOD_PUISSANCE", "MOD_APPRENTISSAGE", "PERMUTATION_PISTE", "PARTAGE_INFO_ETAT_GARDIEN", "MOD_LOI_DU_COEUR"]
-      }
-    };
+// REGLES_COEUR_SYNTHESE est désormais fourni par data/livret_v5_3.js
+
 
     async function copyContextForGemini(event) {
       const forceFull = event && event.shiftKey;
@@ -1778,7 +1229,7 @@
           projet: 'Amazonia : Dernier Rempart — Doc Studio',
           schema_version: latestVersion.replace(/^v/, ''),
           mode_extraction: modeLabel,
-          fichiers_source: ['data/amazonia_data_v5_3.js', 'data/catalog_v5_3.json', 'index.html'],
+          fichiers_source: ['data/amazonia_data_v5_3.js', 'data/livret_v5_3.js', 'data/catalog_v5_3.json', 'index.html'],
           workflow_rule: 'Ne jamais réécrire tout le catalogue : fournir uniquement des patchs ciblés (script Python incrémental ou bloc exact).'
         },
         regles_coeur: REGLES_COEUR_SYNTHESE,

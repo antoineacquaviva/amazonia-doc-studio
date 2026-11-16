@@ -134,7 +134,7 @@
             nom: 'L’Étreinte de l’Anaconda', cycle: 'DOUBLE_FACE_UPGRADE', cablage: [1,2,3,4,5,6], fenetre: 'OUVERTURE',
             primitive: 'DEPLACEMENT (MACHINE)', tags: ['RECUL'], requires_options: {},
             texte: '<strong>Face 1 :</strong> Faites reculer d’1 parcelle (p → p-1) une machine non en siège située sur une parcelle avec un Défenseur.<br><strong>Face 2 :</strong> Faites reculer d’1 parcelle n’importe quelle machine non en siège.',
-            temoin: 'Saute les Routes Forestières. Les cibles de la machine se liront depuis sa nouvelle position réelle à l'instant où elle attaque.2.'
+            temoin: 'Saute les Routes Forestières. Les cibles de la machine se liront depuis sa nouvelle position réelle à l’instant où elle attaque.2.'
           },
           B: {
             nom: 'L’Étreinte de l’Anaconda', cycle: 'DOUBLE_FACE_UPGRADE', cablage: [1,2,3,4,5,6], fenetre: 'LOI 5.3',
@@ -860,7 +860,7 @@
           B: {
             nom: 'La Branche des Guêpes Cazadores', cycle: 'SIMPLE_CONTINU', cablage: null, fenetre: 'LOI 4.2',
             primitive: 'MOD_LOI_DU_COEUR (LOI_NID_AUTONOME)', tags: ['NID', 'INSECTES'], requires_options: {},
-            texte: '<strong>Loi 4.2 (Pouponnière) :</strong> Ce Nid s’active aussi sans Défenseur en 4.2 s’il contient déjà au moins 2 Insectes à l'instant où ce Nid est résolu (1 activation max/tour).',
+            texte: '<strong>Loi 4.2 (Pouponnière) :</strong> Ce Nid s’active aussi sans Défenseur en 4.2 s’il contient déjà au moins 2 Insectes à l’instant où ce Nid est résolu (1 activation max/tour).',
             temoin: 'Génère +2 Insectes chaque tour en autonomie complète.'
           },
           C: {
@@ -1008,8 +1008,36 @@
     // -------------------------------------------------------------------------
     const VERSION_CHANGELOG = [
       {
+      "version": "v5.3",
+      "date": "Version consolidée en vigueur (Audit · 25 arbitrages)",
+      "titre": "Seuil Imprimé Fixe, Embuscade unique (100 profils), Furtivité à 4 emplacements jumeaux & Zéro Verrouillage",
+      "resume": "Alignement intégral Livret Humain / Catalogue (100 profils) / Simulateur / BGA : Seuil Imprimé fixe (P4_2233 / P5_22233), Furtivité orientée à 4 emplacements jumeaux, gouvernance unitaire par Peuple d’origine, défausse immédiate des Insectes à la parade (zéro dette et zéro verrouillage des parcelles), cascades de Gardiens à plat (1→6) et résolution complète machine par machine.",
+      "deltas": [
+            {
+                  "domaine": "1. Topologie, Seuil Imprimé & Chaîne des Parades (100 profils)",
+                  "avant": "v5.2 : Seuil comptant Arbres + Souches ; 2 options de Pièges avec Amortisseur (116 profils D/E).",
+                  "apres": "v5.3 : P4_2233 [2,2,3,3] (10N Arbres) ou P5_22233 [2,2,2,3,3] (12N Arbres). Seuil = max(1, Seuil_Imprimé(p) + Offset + Rouges - Bleus + Mod_Tactique + Mod_Tuiles). Suppression de l’Amortisseur (100 profils). Chaîne stricte à chaque frappe : 1° Jaguar (2 bleus) -> 2° Harpie -> 3° Piège Embuscade (si Défense totale >= 1, locale ou à distance) -> 4° Parade classique."
+            },
+            {
+                  "domaine": "2. Furtivité à 4 emplacements jumeaux, Silence & Gouvernance",
+                  "avant": "Action bilatérale sur les 2 rives ou mémoire de l’ordre d’arrivée ; décisions collectives sur les tuiles.",
+                  "apres": "v5.3 : 4 emplacements par case Furtivité (2 jumeaux/rive, max 2 Défenseurs). Entrer sur la case (toute face) tire l’autre pion sur le jumeau de son bord et oriente l’unique action du binôme ; retourner de réflexion à définitif se fait strictement sur place. Silence tactique sous paravent fermé ; chaque Tuile et piste de Migration est gouvernée par son seul Peuple d’origine (Sabotages visibles par H)."
+            },
+            {
+                  "domaine": "3. Combat d’un seul tenant, Zéro Verrouillage, Routes & Contact Nid",
+                  "avant": "Dette d’Insectes engagés ou verrouillage des parcelles ciblées durant l’Étape 5 ; cibles figées à la révélation.",
+                  "apres": "v5.3 : Défausse immédiate des Insectes requis à la frappe et zéro verrouillage des parcelles (seul un Piège déjà déclenché ne paie plus de coût volontaire). Ordre Tactiques 1..6 puis Sièges (Abatteuse avant Bulldozer sur un même rayon), chaque machine résolue d’un seul tenant depuis sa position réelle. Routes sautées le long du rayon ; tout mouvement machine entrant sur un Nid le renvoie reconstructible en lisière et défausse les Insectes de la case."
+            },
+            {
+                  "domaine": "4. Dés, Rêves, Nids, Cascades à plat (1→6), Siège & Fin de partie",
+                  "avant": "Cascades imbriquées, seuil de Réveil recalculé après sacrifice, Siège dépendant de T4.",
+                  "apres": "v5.3 : Double = Rêve ; hors double, min(D1,D2) sur la machine (annulée si Rêve). Rêve inséré en case 6 (éjecte la Tactique la plus à droite, glissement partiel). Nid indivisible avant Gardiens ; Migration 0 ou 1 cran (aller simple vers pistes globales). Cascades à plat de 1 à 6 (marquage immédiat, Faces 2 autonomes). Siège autonome (0 Apprentissage). Seuil de Réveil fixe vérifié en fin de 5.3 (+ Écho en 6.2) ; raz totale des jetons Apprentissage en 6.2."
+            }
+      ]
+},
+      {
         version: 'v5.2',
-        date: 'Version en vigueur',
+        date: 'Étape intermédiaire (116 profils)',
         titre: 'Deux options exclusives de Pièges (Embuscade Assistée vs Amortisseur), 30 nouveaux profils D/E & Système de Tags',
         resume: 'Suppression définitive de l’auto-parade inconditionnelle des Pièges au profit de l’Axe 10 du châssis (portant l’espace de test à 128 configurations) et ajout de 30 profils dédiés (15 D + 15 E), portant le catalogue à 116 profils.',
         deltas: [
@@ -1111,7 +1139,7 @@ if (CATALOGUE_TUILES.SLOT_COLONISATION_GARDIENS && CATALOGUE_TUILES.SLOT_COLONIS
 VERSION_CHANGELOG.unshift({
   version: 'v5.3',
   date: 'Version consolidée en vigueur',
-  titre: 'Seuil Imprimé Fixe (P4_2233 / P5_22233), Fin de partie unique en 5.3, Embuscade unique (100 profils) & Zéro défausse immédiate d'Insectes',
+  titre: 'Seuil Imprimé Fixe (P4_2233 / P5_22233), Fin de partie unique en 5.3, Embuscade unique (100 profils) & Zéro défausse immédiate d’Insectes',
   resume: 'Épuration cognitive majeure : le Seuil de Parade lit un Seuil Imprimé fixe par parcelle (sans jamais compter Arbres ni Souches). Suppression de l’Amortisseur et des 15 profils E (100 profils), vérification unique de fin de partie en fin de 5.3, pose furtive 4.1 autorisée sur parcelle ciblée, verrouillage des Insectes/Pièges sur parcelles ciblées en Étape 5, et bonus constructeur à N=3.',
   deltas: [
     {
@@ -1180,7 +1208,7 @@ const SPEC_FORMELLE_V5_3 = {
     "gouvernance_unitaire": "Chaque Tuile de Synergie (Gardien, Rêve, Nid) et chaque piste de Migration est gouvernée exclusivement par le joueur de son Peuple d'origine (champ peuple_origine). Zéro vote de groupe.",
     "communication_muette": "Silence tactique complet tant que les paravents sont fermés (aucun échange verbal ou gestuel sur les coups, cartes ou dés). Sous Le Cri d'Alarme de l'Ara (ouverture anticipée), visibilité publique des cartes et dés mais pose individuelle sans concertation orale.",
     "pont_routier_routes_forestieres": "Le long d'un rayon de Forêt, toute Route Forestière est systématiquement sautée : viser devant, avancer, reculer, glisser un Piège ou migrer désignent toujours la prochaine parcelle non rasée dans cette direction. Latéralement (Forêt <-> Furtivité), une Route Forestière est infranchissable et inoccupable.",
-    "suppression_dette_et_verrouillage": "Zéro Insecte engagé et zéro verrouillage des parcelles ciblées. Les Insectes requis lors d'une parade classique sont défaussés immédiatement à la frappe. Tant qu'un Insecte est sur le plateau, il est libre. Seul un Piège ayant déjà paré au moins une frappe ce tour-ci ne peut plus payer un coût volontaire avant son retrait de fin d'attaques.",
+    "suppression_dette_et_verrouillage": "Zéro Insecte engagé et zéro verrouillage des parcelles ciblées. Les Insectes requis lors d’une parade classique sont défaussés immédiatement à la frappe. Tant qu'un Insecte est sur le plateau, il est libre. Seul un Piège ayant déjà paré au moins une frappe ce tour-ci ne peut plus payer un coût volontaire avant son retrait de fin d'attaques.",
     "cascades_gardiens_a_plat": "On résout toujours intégralement l'action ou la tuile en cours avant d'examiner la Piste des Gardiens (signal binaire allumé/éteint par case 1..6, sans cumul de cardinalité). Dès qu'un Gardien s'ouvre, il reçoit immédiatement son marqueur 'utilisé' avant application de son texte. Balayage à plat dans l'ordre croissant des cases 1 à 6, répété tant qu'une case allumée porte un Gardien non utilisé."
   },
   "etapes_tour": [
@@ -1274,7 +1302,7 @@ const SPEC_FORMELLE_V5_3 = {
     "A16": "Contact Machine-Nid : tout mouvement entrant (avancée, recul, repli) renvoie le Nid reconstructible en lisière et défausse tous les Insectes de la parcelle.",
     "A17": "Migration des Insectes : 0 ou 1 cran facultatif (suivi par retournement des pions) ; aller simple définitif et sans limite vers les pistes globales.",
     "A18": "Production des Nids : bloc indivisible (création selon état réel présent + pouvoir du Nid avant Gardiens) ; Miel des Ancêtres restreint aux jetons Insecte.",
-    "A19": "Cibles dynamiques : lues selon la position physique réelle de la machine à l'instant où elle attaque.",
+    "A19": "Cibles dynamiques : lues selon la position physique réelle de la machine à l’instant où elle attaque.",
     "A20": "Matamata et chaîne des parades : Matamata vérifie la présence d'une Souche à chaque frappe ; ordre Jaguar -> Harpie -> Piège -> Parade classique.",
     "A21": "Anti-blocage et Nids : pose interdite sur case morte/tuile inconstructible ; 1 seul Nid par parcelle sans machine ; choix du bâtisseur libéré par Peuple d'origine.",
     "A22": "Communication muette : silence tactique sous paravent fermé ; simple visibilité publique sans concertation orale sous l'Ara.",

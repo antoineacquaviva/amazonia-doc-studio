@@ -78,7 +78,7 @@
       "gouvernance_unitaire": "Chaque Tuile de Synergie (Gardien, Rêve, Nid) et chaque piste de Migration est gouvernée exclusivement par le joueur de son Peuple d'origine (champ peuple_origine). Zéro vote de groupe.",
       "communication_muette": "Silence tactique complet tant que les paravents sont fermés (aucun échange verbal ou gestuel sur les coups, cartes ou dés). Sous Le Cri d'Alarme de l'Ara (ouverture anticipée), visibilité publique des cartes et dés mais pose individuelle sans concertation orale.",
       "pont_routier_routes_forestieres": "Le long d'un rayon de Forêt, toute Route Forestière est systématiquement sautée : viser devant, avancer, reculer, glisser un Piège ou migrer désignent toujours la prochaine parcelle non rasée dans cette direction. Latéralement (Forêt <-> Furtivité), une Route Forestière est infranchissable et inoccupable.",
-      "suppression_dette_et_verrouillage": "Zéro Insecte engagé et zéro verrouillage des parcelles ciblées. Les Insectes requis lors d'une parade classique sont défaussés immédiatement à la frappe. Tant qu'un Insecte est sur le plateau, il est libre. Seul un Piège ayant déjà paré au moins une frappe ce tour-ci ne peut plus payer un coût volontaire avant son retrait de fin d'attaques.",
+      "suppression_dette_et_verrouillage": "Zéro Insecte engagé et zéro verrouillage des parcelles ciblées. Les Insectes requis lors d’une parade classique sont défaussés immédiatement à la frappe. Tant qu'un Insecte est sur le plateau, il est libre. Seul un Piège ayant déjà paré au moins une frappe ce tour-ci ne peut plus payer un coût volontaire avant son retrait de fin d'attaques.",
       "cascades_gardiens_a_plat": "On résout toujours intégralement l'action ou la tuile en cours avant d'examiner la Piste des Gardiens (signal binaire allumé/éteint par case 1..6, sans cumul de cardinalité). Dès qu'un Gardien s'ouvre, il reçoit immédiatement son marqueur 'utilisé' avant application de son texte. Balayage à plat dans l'ordre croissant des cases 1 à 6, répété tant qu'une case allumée porte un Gardien non utilisé."
     },
     "etapes_tour": [
@@ -172,7 +172,7 @@
       "A16": "Contact Machine-Nid : tout mouvement entrant (avancée, recul, repli) renvoie le Nid reconstructible en lisière et défausse tous les Insectes de la parcelle.",
       "A17": "Migration des Insectes : 0 ou 1 cran facultatif (suivi par retournement des pions) ; aller simple définitif et sans limite vers les pistes globales.",
       "A18": "Production des Nids : bloc indivisible (création selon état réel présent + pouvoir du Nid avant Gardiens) ; Miel des Ancêtres restreint aux jetons Insecte.",
-      "A19": "Cibles dynamiques : lues selon la position physique réelle de la machine à l'instant où elle attaque.",
+      "A19": "Cibles dynamiques : lues selon la position physique réelle de la machine à l’instant où elle attaque.",
       "A20": "Matamata et chaîne des parades : Matamata vérifie la présence d'une Souche à chaque frappe ; ordre Jaguar -> Harpie -> Piège -> Parade classique.",
       "A21": "Anti-blocage et Nids : pose interdite sur case morte/tuile inconstructible ; 1 seul Nid par parcelle sans machine ; choix du bâtisseur libéré par Peuple d'origine.",
       "A22": "Communication muette : silence tactique sous paravent fermé ; simple visibilité publique sans concertation orale sous l'Ara.",

@@ -190,7 +190,7 @@
           "RECUL"
         ],
         "requires_options": {},
-        "texte": "<strong>Face 1 :</strong> Faites reculer d’1 parcelle (p → p-1) une machine non en siège située sur une parcelle avec un Défenseur.<br><strong>Face 2 :</strong> Faites reculer d’1 parcelle n’importe quelle machine non en siège.",
+        "texte": "<strong>Face 1 :</strong> Faites reculer d’1 parcelle non rasée vers la bordure une machine non en Siège située sur une parcelle avec au moins 1 Défenseur.<br><strong>Face 2 :</strong> Faites reculer d’1 parcelle non rasée vers la bordure n’importe quelle machine non en Siège.",
         "temoin": "Saute les Routes Forestières (et détruit par contact un éventuel Nid non protégé à l’arrivée). Les cibles de la machine se liront depuis sa nouvelle position réelle à l’instant où elle attaque."
       },
       "B": {
@@ -628,7 +628,7 @@
           "ARMEMENT"
         ],
         "requires_options": {},
-        "texte": "Vous pouvez poser 1 Piège sur une parcelle des Mammifères ou des Humains contenant au moins 1 Défenseur ou 1 Insecte (même avec machine ou ciblage, sans exiger de Souche).",
+        "texte": "Vous pouvez poser 1 Piège sur une parcelle non rasée sans Piège des Mammifères ou des Humains contenant au moins 1 Défenseur ou 1 Insecte, même occupée par une machine ou ciblée (allume la case 2).",
         "temoin": "Pose un Piège immédiatement armé par la présence locale (un soutien distant seul ne suffit pas pour la pose)."
       }
     },
@@ -1410,7 +1410,7 @@
           "POSE"
         ],
         "requires_options": {},
-        "texte": "Face à une Route Forestière de l’autre rayon sur la lisière Humains–Reptiles, vous pouvez poser 1 Piège sur la parcelle non rasée en face (même ne portant que des Souches, ciblée ou avec machine).",
+        "texte": "Face à une Route Forestière de l’autre rayon sur la lisière Humains–Reptiles, vous pouvez poser 1 Piège sur la parcelle non rasée sans Piège en face, même ne portant que des Souches, ciblée ou occupée par une machine (allume la case 2).",
         "temoin": "Transforme une Route subie sur une rive en protection pour l’autre rive."
       },
       "D": {
@@ -2169,7 +2169,7 @@
           "LECTURE_DE"
         ],
         "requires_options": {},
-        "texte": "Lorsqu’un joueur obtient ce rang avec son dé M en 3.2, il peut défausser l’Insecte pour décaler la lecture de son dé M d’1 rang (M-1 ou M+1).",
+        "texte": "Lorsqu’un joueur obtient ce rang avec son dé M en 3.2, le gouverneur de la piste (Insectes, ou ce joueur si I est absent) peut défausser l’Insecte pour décaler la lecture de ce dé M d’1 rang (M−1 ou M+1, borné de 1 à 6).",
         "temoin": "Permet de dévier une lecture vers un Rêve voisin."
       },
       "C": {
@@ -2257,122 +2257,122 @@
     // 4. JOURNAL STRUCTURÉ DES ÉVOLUTIONS (v4.3 -> v4.9 -> v5.0 -> v5.1 -> v5.2)
     // -------------------------------------------------------------------------
     const VERSION_CHANGELOG = [
+  {
+    "version": "v5.3",
+    "date": "Version consolidée en vigueur (Audit · 25 arbitrages)",
+    "titre": "Seuil Imprimé Fixe, Embuscade unique (100 profils), Furtivité à 4 emplacements jumeaux & Zéro Verrouillage",
+    "resume": "Alignement intégral Livret Humain / Catalogue (100 profils) / Simulateur / BGA : Seuil Imprimé fixe (P4_2233 / P5_22233), Furtivité orientée à 4 emplacements jumeaux, gouvernance unitaire par Peuple d’origine, défausse immédiate des Insectes à la parade (zéro dette et zéro verrouillage des parcelles), cascades de Gardiens à plat (1→6) et résolution complète machine par machine.",
+    "deltas": [
       {
-      "version": "v5.3",
-      "date": "Version consolidée en vigueur (Audit · 25 arbitrages)",
-      "titre": "Seuil Imprimé Fixe, Embuscade unique (100 profils), Furtivité à 4 emplacements jumeaux & Zéro Verrouillage",
-      "resume": "Alignement intégral Livret Humain / Catalogue (100 profils) / Simulateur / BGA : Seuil Imprimé fixe (P4_2233 / P5_22233), Furtivité orientée à 4 emplacements jumeaux, gouvernance unitaire par Peuple d’origine, défausse immédiate des Insectes à la parade (zéro dette et zéro verrouillage des parcelles), cascades de Gardiens à plat (1→6) et résolution complète machine par machine.",
-      "deltas": [
-            {
-                  "domaine": "1. Topologie, Seuil Imprimé & Chaîne des Parades (100 profils)",
-                  "avant": "v5.2 : Seuil comptant Arbres + Souches ; 2 options de Pièges avec Amortisseur (116 profils D/E).",
-                  "apres": "v5.3 : P4_2233 [2,2,3,3] (10N Arbres) ou P5_22233 [2,2,2,3,3] (12N Arbres). Seuil = max(1, Seuil_Imprimé(p) + Offset + Rouges - Bleus + Mod_Tactique + Mod_Tuiles). Suppression de l’Amortisseur (100 profils). Chaîne stricte à chaque frappe : 1° Jaguar (2 bleus) -> 2° Harpie -> 3° Piège Embuscade (si Défense totale >= 1, locale ou à distance) -> 4° Parade classique."
-            },
-            {
-                  "domaine": "2. Furtivité à 4 emplacements jumeaux, Silence & Gouvernance",
-                  "avant": "Action bilatérale sur les 2 rives ou mémoire de l’ordre d’arrivée ; décisions collectives sur les tuiles.",
-                  "apres": "v5.3 : 4 emplacements par case Furtivité (2 jumeaux/rive, max 2 Défenseurs). Entrer sur la case (toute face) tire l’autre pion sur le jumeau de son bord et oriente l’unique action du binôme ; retourner de réflexion à définitif se fait strictement sur place. Silence tactique sous paravent fermé ; chaque Tuile et piste de Migration est gouvernée par son seul Peuple d’origine (Sabotages visibles par H)."
-            },
-            {
-                  "domaine": "3. Combat d’un seul tenant, Zéro Verrouillage, Routes & Contact Nid",
-                  "avant": "Dette d’Insectes engagés ou verrouillage des parcelles ciblées durant l’Étape 5 ; cibles figées à la révélation.",
-                  "apres": "v5.3 : Défausse immédiate des Insectes requis à la frappe et zéro verrouillage des parcelles (seul un Piège déjà déclenché ne paie plus de coût volontaire). Ordre Tactiques 1..6 puis Sièges (Abatteuse avant Bulldozer sur un même rayon), chaque machine résolue d’un seul tenant depuis sa position réelle. Routes sautées le long du rayon ; tout mouvement machine entrant sur un Nid le renvoie reconstructible en lisière et défausse les Insectes de la case."
-            },
-            {
-                  "domaine": "4. Dés, Rêves, Nids, Cascades à plat (1→6), Siège & Fin de partie",
-                  "avant": "Cascades imbriquées, seuil de Réveil recalculé après sacrifice, Siège dépendant de T4.",
-                  "apres": "v5.3 : Double = Rêve ; hors double, min(D1,D2) sur la machine (annulée si Rêve). Rêve inséré en case 6 (éjecte la Tactique la plus à droite, glissement partiel). Nid indivisible avant Gardiens ; Migration 0 ou 1 cran (aller simple vers pistes globales). Cascades à plat de 1 à 6 (marquage immédiat, Faces 2 autonomes). Siège autonome (0 Apprentissage). Seuil de Réveil fixe vérifié en fin de 5.3 (+ Écho en 6.2) ; raz totale des jetons Apprentissage en 6.2."
-            }
-      ]
-},
-      {
-        version: 'v5.2',
-        date: 'Étape intermédiaire (116 profils)',
-        titre: 'Deux options exclusives de Pièges (Embuscade Assistée vs Amortisseur), 30 nouveaux profils D/E & Système de Tags',
-        resume: 'Suppression définitive de l’auto-parade inconditionnelle des Pièges au profit de l’Axe 10 du châssis (portant l’espace de test à 128 configurations) et ajout de 30 profils dédiés (15 D + 15 E), portant le catalogue à 116 profils.',
-        deltas: [
-          {
-            domaine: 'Mécanique des Pièges (Étape 5 · Axe 10)',
-            avant: 'v4.3 à v5.1 : Un jeton Piège sur une parcelle parait automatiquement et inconditionnellement toutes les frappes ciblant cette parcelle, même sans aucun Défenseur ni Insecte.',
-            apres: 'v5.2 : Deux options exclusives sur l’Axe 10 :\n• Option par défaut exige Défense totale >= 1 (locale ou soutenue à distance) (Embuscade Assistée) : le Piège pare automatiquement si et seulement si la parcelle dispose d’au moins 1 point de Défense à l’instant de la frappe (pion local ou soutien autorisé).\n• Option AMORTISSEUR_SANS_PARADE (Amortisseur de Dégâts) : aucune Parade, mais réduit la coupe effective de l’Abatteuse de -1 et ramène le terrassement du Bulldozer à 0 Souche (sans besoin de présence).'
-          },
-          {
-            domaine: 'Engagement & Persistance des Pièges (5.3)',
-            avant: 'v5.1 : Tout Piège sur une parcelle ciblée se déclenchait.',
-            apres: 'v5.2 : Un Piège ne devient engagé (PIEGE_ENGAGE = true) et n’est retiré/glissé en 5.3 que s’il a effectivement agi (Parade sous Embuscade, ou réduction réelle de dégâts sous Amortisseur). Un Piège non armé ou redondant avec M5 C / R8 B reste non engagé sur sa parcelle.'
-          },
-          {
-            domaine: 'Extension de la Bibliothèque : +30 Profils (D & E)',
-            avant: 'v5.1 : 86 profils au total (64 A/B + 22 C).',
-            apres: 'v5.2 : 116 profils au total sur les 32 mêmes emplacements : ajout de 15 profils D (G3, G7, G10, G11, G14, R4, R5, R6, R8, R10, M1 à M5) liés à l’Embuscade et 15 profils E liés à l’Amortisseur, avec validation stricte requires_options et 5 modules N=3 clés en main.'
-          }
-        ]
+        "domaine": "1. Topologie, Seuil Imprimé & Chaîne des Parades (100 profils)",
+        "avant": "v5.2 : Seuil comptant Arbres + Souches ; 2 options de Pièges avec Amortisseur (116 profils D/E).",
+        "apres": "v5.3 : P4_2233 [2,2,3,3] (10N Arbres) ou P5_22233 [2,2,2,3,3] (12N Arbres). Seuil = max(1, Seuil_Imprimé(p) + Offset + Rouges - Bleus + Mod_Tactique + Mod_Tuiles). Suppression de l’Amortisseur (100 profils). Chaîne stricte à chaque frappe : 1° Jaguar (2 bleus) -> 2° Harpie -> 3° Piège Embuscade (si Défense totale >= 1, locale ou à distance) -> 4° Parade classique."
       },
       {
-        version: 'v5.1',
-        date: 'Consolidation offensive & simplifications',
-        titre: 'Puissance de frappe des Machines renforcée & 11 arbitrages de simplification',
-        resume: 'Augmentation de la létalité des machines non parées pour créer des états intermédiaires de Souches et suppression des conditions superflues sur 11 tuiles.',
-        deltas: [
-          {
-            domaine: 'Frappe de l’Abatteuse & du Bulldozer (5.1 & 5.2)',
-            avant: 'v4.3 à v5.0 : L’Abatteuse coupait 1 seul Arbre en Souche ; le Bulldozer retirait uniquement les Souches déjà présentes (frappait à vide sur 3 Arbres debout).',
-            apres: 'v5.1+ : L’Abatteuse coupe jusqu’à 2 Arbres debout par parcelle frappée. Le Bulldozer coupe jusqu’à 1 Arbre debout en Souche PUIS terrasse toutes les Souches non protégées (y compris celle qu’il vient de créer), avec une seule vérification de Parade avant la coupe.'
-          },
-          {
-            domaine: 'Cible rasée avant résolution (5.1 / 5.2)',
-            avant: 'Question ouverte en cas d’inversion G8 B ou de frappes multiples.',
-            apres: 'v5.1+ : Toute frappe dont la parcelle cible a été rasée (Route Forestière) avant sa résolution est annulée sans report.'
-          },
-          {
-            domaine: 'Simplification de 11 profils (G5 A, G7 A, G8 A/B, R8 B, M5 A/C, G3 C, R4 C)',
-            avant: 'Seuils mémorisés ou restrictions d’arbres debout.',
-            apres: 'Lecture dynamique des Souches pour G5 A (valent 0), pose sous machine autorisée pour G7 A, R8 B laisse toujours 1 Souche sans condition de quantité initiale, M5 C coupe 1 Arbre mais terrasse 0 Souche.'
-          }
-        ]
+        "domaine": "2. Furtivité à 4 emplacements jumeaux, Silence & Gouvernance",
+        "avant": "Action bilatérale sur les 2 rives ou mémoire de l’ordre d’arrivée ; décisions collectives sur les tuiles.",
+        "apres": "v5.3 : 4 emplacements par case Furtivité (2 jumeaux/rive, max 2 Défenseurs). Entrer sur la case (toute face) tire l’autre pion sur le jumeau de son bord et oriente l’unique action du binôme ; retourner de réflexion à définitif se fait strictement sur place. Silence tactique sous paravent fermé ; chaque Tuile et piste de Migration est gouvernée par son seul Peuple d’origine (Sabotages visibles par H)."
       },
       {
-        version: 'v5.0',
-        date: 'Enrichissement asymétrique',
-        titre: 'Ajout de la Bibliothèque complémentaire des 22 Profils C & Conventions de résolution',
-        resume: 'Création d’un 3e profil expérimental (Profil C) sur 20 tuiles de lisière et les 2 slots de migration (La Cigale et Les Lucioles), avec câblages dédiés (G10 C sur case 6, G12 C sur case 2) et cycle nourri (G14 C).',
-        deltas: [
-          {
-            domaine: 'Bibliothèque C (22 nouveaux profils)',
-            avant: 'v4.9 : Uniquement Profil A (Flux) et Profil B (Loi) par emplacement (64 profils).',
-            apres: 'v5.0+ : Ajout de 22 profils C explorant les traversées directes (G3 C, R7 C), les soutiens depuis les machines (G5 C), la Terra Preta en repousse finale (R6 C), le cycle À jeun/Rassasié (G14 C), la Cigale (Bug C) et les Lucioles (Colonie C).'
-          }
-        ]
+        "domaine": "3. Combat d’un seul tenant, Zéro Verrouillage, Routes & Contact Nid",
+        "avant": "Dette d’Insectes engagés ou verrouillage des parcelles ciblées durant l’Étape 5 ; cibles figées à la révélation.",
+        "apres": "v5.3 : Défausse immédiate des Insectes requis à la frappe et zéro verrouillage des parcelles (seul un Piège déjà déclenché ne paie plus de coût volontaire). Ordre Tactiques 1..6 puis Sièges (Abatteuse avant Bulldozer sur un même rayon), chaque machine résolue d’un seul tenant depuis sa position réelle. Routes sautées le long du rayon ; tout mouvement machine entrant sur un Nid le renvoie reconstructible en lisière et défausse les Insectes de la case."
       },
       {
-        version: 'v4.9',
-        date: 'Architecture formelle consolidée (depuis v4.3)',
-        titre: 'Du Socle Didactique v4.3 à l’Architecture Siège T4, Surchauffe Rouge/Bleu & Routes Forestières',
-        resume: 'Structuration complète du matériel (mini-paravents, jetons Puissance double-face Rouge/Bleu, Routes Forestières, Siège T4 irréversible et grammaire à 8 primitives).',
-        deltas: [
-          {
-            domaine: 'Secret & Matériel individuel (Étape 1 & 2)',
-            avant: 'v4.3 : Gobelet opaque + carte Tactique « leurre » posée face cachée en cas de Sabotage ou Rêve.',
-            apres: 'v4.9+ : Plateau personnel à Mini-Paravent reproduisant les 6 rangs (le dé M y est posé en secret ; l’emplacement Tactique reste simplement vide sur Sabotage ou Rêve). Jetons 1er Défenseur (1 face) et 2e Défenseur (2 faces réflexion/définitif) différenciés.'
-          },
-          {
-            domaine: 'Jetons Puissance Double-Face : Rouge (+1) / Bleu Surchauffe (-1)',
-            avant: 'v4.3 : Jetons Puissance simples (+1 au seuil).',
-            apres: 'v4.9+ : Jetons double-face : Rouge (+1 Seuil) au recto, Bleu Surchauffe (-1 Seuil en Étape 5 ET -1 Apprentissage en 6.1) au verso. Retourner un rouge en bleu abaisse de 2 le seuil brut.'
-          },
-          {
-            domaine: 'Routes Forestières & Siège Irréversible en T4 (1.1, 5.2, 5.3)',
-            avant: 'v4.3 : Pas de règle de saut de parcelle rasée ni de verrouillage en bout de piste.',
-            apres: 'v4.9+ : Une parcelle sans arbre ni souche reçoit une tuile Route Forestière (sautée par machines et insectes). Toute machine sur la dernière parcelle non rasée de son rayon entre irréversiblement en Siège (T4 automatique hors pioche à chaque tour).'
-          },
-          {
-            domaine: 'Deux Slots de Migration Centrale (4.3)',
-            avant: 'v4.3 : Migration uniquement vers la Piste des Tactiques (Bug du Cerveau).',
-            apres: 'v4.9+ : Choix en fin de rayon entre SLOT_BUG_CERVEAU (Piste des Tactiques) et SLOT_COLONISATION_GARDIENS (Piste des Gardiens).'
-          }
-        ]
+        "domaine": "4. Dés, Rêves, Nids, Cascades à plat (1→6), Siège & Fin de partie",
+        "avant": "Cascades imbriquées, seuil de Réveil recalculé après sacrifice, Siège dépendant de T4.",
+        "apres": "v5.3 : Double = Rêve ; hors double, min(D1,D2) sur la machine (annulée si Rêve). Rêve inséré en case 6 (éjecte la Tactique la plus à droite, glissement partiel). Nid indivisible avant Gardiens ; Migration 0 ou 1 cran (aller simple vers pistes globales). Cascades à plat de 1 à 6 (marquage immédiat, Faces 2 autonomes). Siège autonome (0 Apprentissage). Seuil de Réveil fixe vérifié en fin de 5.3 (+ Écho en 6.2) ; raz totale des jetons Apprentissage en 6.2."
       }
-    ];
+    ]
+  },
+  {
+    "version": "v5.2",
+    "date": "Étape intermédiaire (116 profils)",
+    "titre": "Deux options exclusives de Pièges (Embuscade Assistée vs Amortisseur), 30 nouveaux profils D/E & Système de Tags",
+    "resume": "Suppression définitive de l’auto-parade inconditionnelle des Pièges au profit de l’Axe 10 du châssis (portant l’espace de test à 128 configurations) et ajout de 30 profils dédiés (15 D + 15 E), portant le catalogue à 116 profils.",
+    "deltas": [
+      {
+        "domaine": "Mécanique des Pièges (Étape 5 · Axe 10)",
+        "avant": "v4.3 à v5.1 : Un jeton Piège sur une parcelle parait automatiquement et inconditionnellement toutes les frappes ciblant cette parcelle, même sans aucun Défenseur ni Insecte.",
+        "apres": "v5.2 : Deux options exclusives sur l’Axe 10 :\n• Option par défaut exige Défense totale >= 1 (locale ou soutenue à distance) (Embuscade Assistée) : le Piège pare automatiquement si et seulement si la parcelle dispose d’au moins 1 point de Défense à l’instant de la frappe (pion local ou soutien autorisé).\n• Option AMORTISSEUR_SANS_PARADE (Amortisseur de Dégâts) : aucune Parade, mais réduit la coupe effective de l’Abatteuse de -1 et ramène le terrassement du Bulldozer à 0 Souche (sans besoin de présence)."
+      },
+      {
+        "domaine": "Engagement & Persistance des Pièges (5.3)",
+        "avant": "v5.1 : Tout Piège sur une parcelle ciblée se déclenchait.",
+        "apres": "v5.2 : Un Piège ne devient engagé (PIEGE_ENGAGE = true) et n’est retiré/glissé en 5.3 que s’il a effectivement agi (Parade sous Embuscade, ou réduction réelle de dégâts sous Amortisseur). Un Piège non armé ou redondant avec M5 C / R8 B reste non engagé sur sa parcelle."
+      },
+      {
+        "domaine": "Extension de la Bibliothèque : +30 Profils (D & E)",
+        "avant": "v5.1 : 86 profils au total (64 A/B + 22 C).",
+        "apres": "v5.2 : 116 profils au total sur les 32 mêmes emplacements : ajout de 15 profils D (G3, G7, G10, G11, G14, R4, R5, R6, R8, R10, M1 à M5) liés à l’Embuscade et 15 profils E liés à l’Amortisseur, avec validation stricte requires_options et 5 modules N=3 clés en main."
+      }
+    ]
+  },
+  {
+    "version": "v5.1",
+    "date": "Consolidation offensive & simplifications",
+    "titre": "Puissance de frappe des Machines renforcée & 11 arbitrages de simplification",
+    "resume": "Augmentation de la létalité des machines non parées pour créer des états intermédiaires de Souches et suppression des conditions superflues sur 11 tuiles.",
+    "deltas": [
+      {
+        "domaine": "Frappe de l’Abatteuse & du Bulldozer (5.1 & 5.2)",
+        "avant": "v4.3 à v5.0 : L’Abatteuse coupait 1 seul Arbre en Souche ; le Bulldozer retirait uniquement les Souches déjà présentes (frappait à vide sur 3 Arbres debout).",
+        "apres": "v5.1+ : L’Abatteuse coupe jusqu’à 2 Arbres debout par parcelle frappée. Le Bulldozer coupe jusqu’à 1 Arbre debout en Souche PUIS terrasse toutes les Souches non protégées (y compris celle qu’il vient de créer), avec une seule vérification de Parade avant la coupe."
+      },
+      {
+        "domaine": "Cible rasée avant résolution (5.1 / 5.2)",
+        "avant": "Question ouverte en cas d’inversion G8 B ou de frappes multiples.",
+        "apres": "v5.1+ : Toute frappe dont la parcelle cible a été rasée (Route Forestière) avant sa résolution est annulée sans report."
+      },
+      {
+        "domaine": "Simplification de 11 profils (G5 A, G7 A, G8 A/B, R8 B, M5 A/C, G3 C, R4 C)",
+        "avant": "Seuils mémorisés ou restrictions d’arbres debout.",
+        "apres": "Lecture dynamique des Souches pour G5 A (valent 0), pose sous machine autorisée pour G7 A, R8 B laisse toujours 1 Souche sans condition de quantité initiale, M5 C coupe 1 Arbre mais terrasse 0 Souche."
+      }
+    ]
+  },
+  {
+    "version": "v5.0",
+    "date": "Enrichissement asymétrique",
+    "titre": "Ajout de la Bibliothèque complémentaire des 22 Profils C & Conventions de résolution",
+    "resume": "Création d’un 3e profil expérimental (Profil C) sur 20 tuiles de lisière et les 2 slots de migration (La Cigale et Les Lucioles), avec câblages dédiés (G10 C sur case 6, G12 C sur case 2) et cycle nourri (G14 C).",
+    "deltas": [
+      {
+        "domaine": "Bibliothèque C (22 nouveaux profils)",
+        "avant": "v4.9 : Uniquement Profil A (Flux) et Profil B (Loi) par emplacement (64 profils).",
+        "apres": "v5.0+ : Ajout de 22 profils C explorant les traversées directes (G3 C, R7 C), les soutiens depuis les machines (G5 C), la Terra Preta en repousse finale (R6 C), le cycle À jeun/Rassasié (G14 C), la Cigale (Bug C) et les Lucioles (Colonie C)."
+      }
+    ]
+  },
+  {
+    "version": "v4.9",
+    "date": "Architecture formelle consolidée (depuis v4.3)",
+    "titre": "Du Socle Didactique v4.3 à l’Architecture Siège T4, Surchauffe Rouge/Bleu & Routes Forestières",
+    "resume": "Structuration complète du matériel (mini-paravents, jetons Puissance double-face Rouge/Bleu, Routes Forestières, Siège T4 irréversible et grammaire à 8 primitives).",
+    "deltas": [
+      {
+        "domaine": "Secret & Matériel individuel (Étape 1 & 2)",
+        "avant": "v4.3 : Gobelet opaque + carte Tactique « leurre » posée face cachée en cas de Sabotage ou Rêve.",
+        "apres": "v4.9+ : Plateau personnel à Mini-Paravent reproduisant les 6 rangs (le dé M y est posé en secret ; l’emplacement Tactique reste simplement vide sur Sabotage ou Rêve). Jetons 1er Défenseur (1 face) et 2e Défenseur (2 faces réflexion/définitif) différenciés."
+      },
+      {
+        "domaine": "Jetons Puissance Double-Face : Rouge (+1) / Bleu Surchauffe (-1)",
+        "avant": "v4.3 : Jetons Puissance simples (+1 au seuil).",
+        "apres": "v4.9+ : Jetons double-face : Rouge (+1 Seuil) au recto, Bleu Surchauffe (-1 Seuil en Étape 5 ET -1 Apprentissage en 6.1) au verso. Retourner un rouge en bleu abaisse de 2 le seuil brut."
+      },
+      {
+        "domaine": "Routes Forestières & Siège Irréversible en T4 (1.1, 5.2, 5.3)",
+        "avant": "v4.3 : Pas de règle de saut de parcelle rasée ni de verrouillage en bout de piste.",
+        "apres": "v4.9+ : Une parcelle sans arbre ni souche reçoit une tuile Route Forestière (sautée par machines et insectes). Toute machine sur la dernière parcelle non rasée de son rayon entre irréversiblement en Siège (T4 automatique hors pioche à chaque tour)."
+      },
+      {
+        "domaine": "Deux Slots de Migration Centrale (4.3)",
+        "avant": "v4.3 : Migration uniquement vers la Piste des Tactiques (Bug du Cerveau).",
+        "apres": "v4.9+ : Choix en fin de rayon entre SLOT_BUG_CERVEAU (Piste des Tactiques) et SLOT_COLONISATION_GARDIENS (Piste des Gardiens)."
+      }
+    ]
+  }
+];
 
     // -------------------------------------------------------------------------
 
@@ -2385,35 +2385,6 @@ Object.keys(CATALOGUE_TUILES).forEach(function(tId) {
 if (CATALOGUE_TUILES.SLOT_COLONISATION_GARDIENS && CATALOGUE_TUILES.SLOT_COLONISATION_GARDIENS.profils.B) {
   delete CATALOGUE_TUILES.SLOT_COLONISATION_GARDIENS.profils.B;
 }
-
-VERSION_CHANGELOG.unshift({
-  version: 'v5.3',
-  date: 'Version consolidée en vigueur',
-  titre: 'Seuil Imprimé Fixe (P4_2233 / P5_22233), Fin de partie unique en 5.3, Embuscade unique (100 profils) & Zéro défausse immédiate d’Insectes',
-  resume: 'Épuration cognitive majeure : le Seuil de Parade lit un Seuil Imprimé fixe par parcelle (sans jamais compter Arbres ni Souches). Suppression de l’Amortisseur et des 15 profils E (100 profils), vérification unique de fin de partie en fin de 5.3, pose furtive 4.1 autorisée sur parcelle ciblée, verrouillage des Insectes/Pièges sur parcelles ciblées en Étape 5, et bonus constructeur à N=3.',
-  deltas: [
-    {
-      domaine: '1. Topologie & Formule du Seuil Imprimé',
-      avant: 'v5.2 : P_Max (3,4,5) × Arbres (2,3) ; Seuil = Arbres + Souches + Rouges - Bleus + Mod_Tactique.',
-      apres: 'v5.3 : P4_2233 (10N arbres, seuils [2,2,3,3]) ou P5_22233 (12N arbres, seuils [2,2,2,3,3]). Seuil = max(1, Seuil_Imprimé(p) + Rouges − Bleus + Mod_Tactique + Mod_Tuiles).'
-    },
-    {
-      domaine: '2. Vérification Unique de Fin de Partie (Fin de 5.3)',
-      avant: 'v5.2 : Arrêts immédiats en 3.1, 3.2 et 4.x ; Réveil passif à N Gardiens.',
-      apres: 'v5.3 : Vérification unique en fin de 5.3 : 1) Sommeil (Rêve au Rang 1), 2) Réveil par Synchronisation Active (min(N, Gardiens dispo) avec min 3, ou 5 à 6J, portent leur marqueur utilisé ce tour), 3) Fin du Tour 8 → Repousse Finale directe sans Étape 6.'
-    },
-    {
-      domaine: '3. Embuscade Unique, Furtivité 4.1 & Verrouillage Étape 5',
-      avant: 'v5.2 : 2 options de Pièges (+15 profils E), pose 4.1 interdite sur parcelle ciblée, suivi de dette INSECTES_ENGAGES.',
-      apres: 'v5.3 : Embuscade Assistée unique (retrait des 15 profils E). Pose 4.1 autorisée sur parcelle ciblée tant qu’aucune machine n’y est présente. En Étape 5, Insectes et Pièges sur parcelles ciblées verrouillés jusqu’en fin de 5.3.'
-    },
-    {
-      domaine: '4. Bonus N=3 & Ajustements Tuiles (G5, G7 B, R3 B, R8 B, Colonie)',
-      avant: 'v5.2 : 2 constructeurs bloqués en lisière à 3J ; Colonisation B actif.',
-      apres: 'v5.3 : À N=3, 1 des 2 constructeurs (G ou R) rejoint gratuitement p=1 en 3.1. Retrait de Colonisation B. Ajustements de G5 A/B (−1 Seuil si ≥ 1 Souche), G7 B (pose sous machine), R3 B (1 constructeur libéré, 2 à N=3) et R8 B (exige Défenseur ou Insecte présent).'
-    }
-  ]
-});
 
 // === BEGIN SPEC_FORMELLE_V5_3 (auto-generated by build_v5_3_audit.py) ===
 const SPEC_FORMELLE_V5_3 = {

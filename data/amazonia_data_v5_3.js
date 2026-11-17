@@ -2450,7 +2450,6 @@ const SPEC_FORMELLE_V5_3 = {
       "nom": "Ouverture des Paravents, Rêves, Dés et Furtivité",
       "regles": [
         "Ouverture simultanée des paravents et fin du silence tactique. Toute carte Sabotage révélée n’a aucun autre effet que d’avoir fait perdre une activation au Contremaître : elle est mise de côté pour être remélangée dans le paquet Machine en fin de tour.",
-        "Double aux dés : peut ouvrir un Rêve en piste. Hors double, le plus petit dé s'applique à la carte Machine (sauf Loi modifiant le dé retenu).",
         "Résolution des Rêves : tout dé M désignant le rang d’un Rêve annule sa machine, ouvre ce Rêve et le fait avancer d’1 cran vers la gauche (max 1 ouverture par Rêve et par tour en châssis standard UNIQUE_PAR_TOUR, résolue de gauche à droite).",
         "Chaque binôme complet sur une case de Furtivité déclenche 1 seule action, gouvernée par le joueur de la rive où se trouvent les 2 emplacements jumeaux occupés."
       ]

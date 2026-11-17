@@ -67,7 +67,7 @@ amazonia-doc-studio/
 ## 4. Modèles de Données & Invariants Mécaniques Cœur (v5.3)
 
 ### 4.1. Répartition des 32 Emplacements (100 Profils exactement)
-- **Gardiens `G1..G15`** (43 profils) · **Rêves `R1..R10`** (31 profils) · **Nids de Croissance `M1..M5`** (19 profils) · **Slots Migration `SLOT_BUG_CERVEAU` & `SLOT_COLONISATION_GARDIENS`** (5 profils — `Colonisation B` et les anciens profils `E` sont supprimés en v5.3, plus 2 profils additionnels sur les lisières portant le total à 100).
+- **Gardiens `G1..G15`** (45 profils) · **Rêves `R1..R10`** (31 profils) · **Nids de Croissance `M1..M5`** (19 profils) · **Slots Migration `SLOT_BUG_CERVEAU` & `SLOT_COLONISATION_GARDIENS`** (5 profils — `Colonisation B` et les anciens profils `E` sont supprimés en v5.3, soit exactement 100 profils).
 - Chaque profil possède : `nom`, `cycle`, `cablage`, `fenetre`, `primitive` (parmi les 8 primitives : `MOD_SEUIL`, `CREATION_ENTITE`, `DEPLACEMENT`, `MOD_PUISSANCE`, `MOD_APPRENTISSAGE`, `PERMUTATION_PISTE`, `PARTAGE_INFO_ETAT_GARDIEN`, `MOD_LOI_DU_COEUR`), `tags`, `requires_options`, `texte` et `temoin`.
 
 ### 4.2. Invariants Mécaniques Cœur Consolidés (Socle des 25 Arbitrages)

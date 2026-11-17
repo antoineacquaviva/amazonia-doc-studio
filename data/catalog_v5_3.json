@@ -87,9 +87,9 @@
         "code": "PREPARATION_POSE_FURTIVITE",
         "nom": "Distribution, Dés secrets et Pose des Défenseurs",
         "regles": [
-          "Les machines déjà sur la dernière parcelle non rasée de leur rayon sont en Siège (carte posée face visible sur place, hors paquet).",
-          "Chaque joueur hors pénurie pioche secrètement 1 carte du paquet Machine (qui inclut toutes les cartes Sabotage ajoutées définitivement lors des tours précédents). Une carte Sabotage tirée n’active aucune machine (action du Contremaître perdue). S’il reste moins de cartes que de joueurs, distribution dans le sens horaire à partir du peuple ayant le plus d’Arbres debout ; tout joueur (avec Sabotage ou sans carte) lance quand même ses 2 dés pour tenter un double Rêve.",
-          "Interdiction à la pose : Route Forestière, emplacement de tuile déjà construit ou plein (2 constructeurs), tuile inconstructible (Gardien sans case libre autorisée, Nid sans parcelle légale), ou rive de Furtivité donnant sur une Route Forestière lorsque l'action requiert une parcelle adjacente non rasée.",
+          "Machines en Siège : toute machine déjà située sur la dernière parcelle non rasée de son rayon est en Siège T4 irréversible (carte posée sur sa parcelle). Son attaque en fin d’Étape 5 est autonome même si la tuile T4 a été éjectée par un Rêve ; en 6.1, elle alimente la tuile T4 en jetons d’Apprentissage si et seulement si T4 est encore présente sur la piste.",
+          "Chaque joueur hors pénurie pioche secrètement 1 carte du paquet Machine (incluant toutes les cartes Sabotage intégrées définitivement). Une carte Sabotage tirée n’active aucune machine (action du Contremaître perdue). S’il reste moins de cartes que de joueurs, distribution dans le sens horaire à partir du peuple ayant le plus d’Arbres debout.",
+          "Sous paravent fermé (silence complet) : chaque joueur ayant reçu une carte Machine lance ses 2D6 et retient M = min(D1, D2) (modifié par les éventuelles Lois actives), qui désigne le rang sur la Piste des Tactiques. Si ce rang contient une tuile Rêve, l’activation de cette machine sera annulée en 3.2.",
           "Piste de Furtivité à 4 emplacements par case (2 jumeaux rive J1, 2 jumeaux rive J2 ; max 2 Défenseurs par case). Lorsqu'un Défenseur ENTRE sur une case de Furtivité (1er Défenseur, 2e en réflexion ou 2e posé directement en choix définitif), on le pose sur l'un des 4 emplacements valides et l'éventuel autre Défenseur présent glisse aussitôt sur l'emplacement jumeau du même bord (orientant l'unique action du binôme). Retourner sur place un jeton de sa face réflexion à sa face choix définitif se fait strictement sur son emplacement actuel, sans déplacement ni tirage."
         ]
       },
@@ -100,7 +100,7 @@
         "regles": [
           "Ouverture simultanée des paravents et fin du silence tactique. Toute carte Sabotage révélée n’a aucun autre effet que d’avoir fait perdre une activation au Contremaître : elle est mise de côté pour être remélangée dans le paquet Machine en fin de tour.",
           "Double aux dés : peut ouvrir un Rêve en piste. Hors double, le plus petit dé s'applique à la carte Machine (sauf Loi modifiant le dé retenu).",
-          "Si l'emplacement désigné par le dé retenu contient un Rêve, l'activation de cette machine est annulée pour le tour et ce Rêve peut s'ouvrir. Chaque Rêve ne peut s'ouvrir qu'au maximum 1 fois par tour toutes sources confondues.",
+          "Résolution des Rêves : tout dé M désignant le rang d’un Rêve annule sa machine, ouvre ce Rêve et le fait avancer d’1 cran vers la gauche (max 1 ouverture par Rêve et par tour en châssis standard UNIQUE_PAR_TOUR, résolue de gauche à droite).",
           "Chaque binôme complet sur une case de Furtivité déclenche 1 seule action, gouvernée par le joueur de la rive où se trouvent les 2 emplacements jumeaux occupés."
         ]
       },
@@ -144,7 +144,7 @@
         "code": "APPRENTISSAGE_ET_MENAGE",
         "nom": "Apprentissage du Contremaître et Ménage de fin de tour",
         "regles": [
-          "Seules les machines activées par une carte révélée ce tour-ci génèrent de l'Apprentissage (les machines en Siège produisent 0 Apprentissage).",
+          "Calcul par machine active ce tour-ci (activée par carte OU en Siège T4) pour sa Tactique (T4 pour un Siège ; sans effet si T4 a été éjectée de la piste) : +1 par parcelle réellement endommagée (>= 1 Arbre coupé ou >= 1 Souche retirée) +1 par jeton Puissance rouge acquis ce tour -1 par jeton bleu Surchauffe présent sur la machine (plancher 0 par machine).",
           "Gain par machine : +1 par parcelle réellement endommagée (au moins 1 Arbre coupé ou 1 Souche retirée par cette machine), +1 par jeton rouge acquis en fin d'attaque, -1 par jeton bleu présent sur la machine.",
           "Réductions : application des retraits volontaires de tuiles (Voile de l'Oubli, Brume de la Dendrobate) AVANT les Insectes Bug du Cerveau (un Bug sur une case déjà à 0 jeton n'est pas défaussé et reste en place).",
           "Avancement : la Tactique strictement seule en tête avec au moins 1 jeton échange sa place avec sa voisine de gauche (y compris un Rêve, qui recule d'un cran à droite ; immobile si déjà en case 1). En cas d'égalité avec L'Écho des Voix Célestes amenant son Rêve en case 1, la fin de partie se déclenche immédiatement à la fin de ce tour (Repousse Finale).",
@@ -153,7 +153,7 @@
       }
     ],
     "arbitrages_valides": {
-      "A01": "Dés et Tactiques : hors double (ouverture Rêve), le plus petit dé s'applique à la carte Machine (modifié par les Lois).",
+      "A01": "Lecture épurée des dés sous paravent : seul un joueur ayant tiré une carte Machine retient M = min(D1, D2) (ou max sous Loi). Si le rang M porte un Rêve en 3.2, la machine est annulée et le Rêve s’ouvre.",
       "A02": "Rêve sur dé Machine : annule l'activation de la machine et peut ouvrir ce Rêve (max 1 ouverture par Rêve et par tour).",
       "A03": "Furtivité à 4 emplacements (2 jumeaux/rive) : entrer sur la case tire l'autre jeton sur le jumeau et oriente l'action unique ; retourner en choix définitif se fait sur place sans déplacement.",
       "A04": "Gouvernance unitaire : chaque tuile de Synergie et piste de Migration est décidée uniquement par son Peuple d'origine.",
@@ -162,7 +162,7 @@
       "A07": "Zéro verrouillage des parcelles ciblées : Insectes toujours libres tant que présents ; seul un Piège déjà déclenché ce tour-ci ne peut plus payer de coût volontaire.",
       "A08": "Pont routier : Routes Forestières systématiquement sautées le long d'un rayon, mais infranchissables/inoccupables latéralement.",
       "A09": "Repli sur création de Route : recul automatique vers la bordure par défaut, vers le cœur seulement si bord tout rasé, retrait si rayon tout rasé ; Siège irréversible maintenu.",
-      "A10": "Autonomie du Siège : actif même si la 4e Tactique est éjectée, et ne génère jamais de jetons d'Apprentissage.",
+      "A10": "Autonomie et Apprentissage du Siège : l’attaque d’une machine en Siège reste active même si la tuile T4 est éjectée ; en 6.1, une machine en Siège génère normalement ses jetons d’Apprentissage sur T4 tant que T4 figure sur la Piste des Tactiques (ignorés si T4 est éjectée).",
       "A11": "Insertion d'un Rêve : éjecte la Tactique la plus à droite ; seules les tuiles à droite du trou glissent à gauche ; pose en case 6 ; Bugs fixes sur les cases.",
       "A12": "Cascades de Gardiens : fin complète de l'effet en cours, marquage immédiat à l'ouverture, balayage à plat de 1 à 6 sans pile imbriquée.",
       "A13": "Faces 2 et Lois passives : seule la face visible s'applique (Faces 2 autonomes) ; une Loi passive reçoit automatiquement son marqueur dès que sa case s'allume.",

@@ -714,8 +714,8 @@
           "SABOTAGE"
         ],
         "requires_options": {},
-        "texte": "<strong>Face 1 :</strong> Piochez 1 carte Sabotage face visible en réserve (allume la case 3 si une carte est piochée).<br><strong>Face 2 :</strong> Piochez jusqu’à 2 cartes Sabotage face visible en réserve (allume la case 3).",
-        "temoin": "Si la pioche et la défausse Sabotage sont vides (toutes les cartes déjà en réserve), aucune carte n’est piochée et la case 3 ne s’allume pas."
+        "texte": "<strong>Face 1 :</strong> Ajoutez définitivement 1 carte Sabotage de la réserve au paquet Machine (mise de côté pour le remélange de 6.3 ; allume la case 3).<br><strong>Face 2 :</strong> Ajoutez définitivement 2 cartes Sabotage de la réserve au paquet Machine (allume la case 3).",
+        "temoin": "Dilue durablement le paquet Machine en réaction à n’importe quel Déclencheur (réserve de cartes Sabotage illimitée)."
       },
       "B": {
         "nom": "Le Guet du Caïman Noir",
@@ -728,15 +728,15 @@
           5,
           6
         ],
-        "fenetre": "LOI 4.1 / LOI 5",
-        "primitive": "MOD_LOI_DU_COEUR (LOI_SABOTAGE_SUR_MACHINE_ACTIVE)",
+        "fenetre": "LOI 4.1 / LOI 3.2",
+        "primitive": "MOD_LOI_DU_COEUR (LOI_SABOTAGE_ACTIF_ET_REVELATION)",
         "tags": [
           "SABOTAGE",
           "FURTIVITE"
         ],
         "requires_options": {},
-        "texte": "<strong>Face 1 (Loi 4.1) :</strong> Un binôme en Furtivité peut saboter sa parcelle cible même si une machine y est active ce tour-ci ou en <strong>Siège</strong>.<br><strong>Face 2 (Loi 4.1 & 5) :</strong> Un binôme en Furtivité peut saboter sa parcelle cible même si une machine y est active ce tour-ci ou en <strong>Siège</strong> ; de plus, les cartes Sabotage en réserve peuvent être jouées librement <strong>à tout moment pendant l’Étape 5</strong>.",
-        "temoin": "En Face 2, lève à la fois l’interdiction de saboter une machine active en 4.1 et la fermeture de la fenêtre Sabotage pendant les attaques."
+        "texte": "<strong>Face 1 (Loi 4.1) :</strong> Un binôme en Furtivité peut saboter sa parcelle cible même si une machine y est active ce tour-ci ou en <strong>Siège</strong>.<br><strong>Face 2 (Loi 4.1 & 3.2) :</strong> Un binôme en Furtivité peut saboter sa parcelle cible même si une machine y est active ce tour-ci ou en <strong>Siège</strong> ; de plus, en 3.2, chaque carte Sabotage révélée derrière un paravent allume la <strong>case 3. Sabotage</strong> et retire <strong>1 jeton Puissance rouge</strong> d’une machine sur les rayons R ou H.",
+        "temoin": "En Face 2, chaque panne tirée en 3.2 déclenche une cascade sur la case 3 (une seule activation max du Gardien câblé en 3) et affaiblit les machines sur R/H avant que la carte Sabotage ne soit remélangée en 6.3."
       },
       "C": {
         "nom": "La Peau de boue",
@@ -826,8 +826,8 @@
           "INSECTES"
         ],
         "requires_options": {},
-        "texte": "<em>(Câblage obligatoire sur 6. Insecte)</em> À l’ouverture, vous pouvez défausser 1 Insecte d’une parcelle Forêt pour piocher 1 carte Sabotage face visible en réserve (allume la case 3 si une carte est piochée).",
-        "temoin": "En 4.2, l’Insecte produit par un Nid peut payer ce coût ; si ouverte pendant l’Étape 5, la carte Sabotage piochée peut être jouée immédiatement !"
+        "texte": "<em>(Câblage obligatoire sur 6. Insecte)</em> À l’ouverture, vous pouvez défausser 1 Insecte d’une parcelle Forêt pour ajouter définitivement 1 carte Sabotage de la réserve au paquet Machine (allume la case 3).",
+        "temoin": "En 4.2, l’Insecte produit par un Nid peut payer ce coût après le bloc indivisible du Nid pour diluer durablement le paquet Machine."
       },
       "D": {
         "nom": "Les éclaireurs de la Dendrobate",
@@ -1390,15 +1390,15 @@
         "nom": "Le Sommeil de la Pierre-Serpent",
         "cycle": "SIMPLE_CONTINU",
         "cablage": null,
-        "fenetre": "LOI SABOTAGE",
-        "primitive": "MOD_LOI_DU_COEUR (LOI_SABOTAGE_PERSISTANT_DANS_PIOCHE)",
+        "fenetre": "LOI 3.2",
+        "primitive": "MOD_LOI_DU_COEUR (LOI_SABOTAGE_REVELE_PROLIFERE)",
         "tags": [
           "SABOTAGE",
           "FURTIVITE"
         ],
         "requires_options": {},
-        "texte": "<strong>Loi Sabotage :</strong> Une fois par tour, lorsqu’une carte Sabotage est jouée alors qu’au moins 1 Défenseur occupe une case Furtivité, conservez cette carte visible en réserve pour un tour ultérieur au lieu de la défausser (une même carte ne peut être jouée qu’une fois par tour).",
-        "temoin": "Recycle gratuitement une carte Sabotage par tour tant qu’une présence furtive est maintenue."
+        "texte": "<strong>Loi 3.2 :</strong> En 3.2, si au moins 1 Défenseur occupe une case Furtivité et qu’au moins 1 carte Sabotage est révélée à l’ouverture des paravents, ajoutez définitivement <strong>+1 nouvelle carte Sabotage</strong> de la réserve au paquet Machine (sans allumer la case 3).",
+        "temoin": "Amplifie boule de neige la dilution du paquet Machine (1 carte bonus max par tour) tant qu’une présence furtive accompagne la révélation d’une panne."
       },
       "C": {
         "nom": "Le Rêve de la seconde rive",
@@ -2016,8 +2016,8 @@
           "INSECTES"
         ],
         "requires_options": {},
-        "texte": "Après production en 4.2, vous pouvez défausser 1 Insecte de ce Nid pour piocher 1 carte Sabotage face visible en réserve (allume la case 3 si une carte est piochée).",
-        "temoin": "Résolu dans le bloc indivisible du Nid : au balayage suivant, les cases 3 et 6 seront examinées dans l’ordre 1 → 6."
+        "texte": "Après production en 4.2, vous pouvez défausser 1 Insecte de ce Nid pour ajouter définitivement 1 carte Sabotage de la réserve au paquet Machine (allume la case 3).",
+        "temoin": "Résolu dans le bloc indivisible du Nid : enrichit définitivement le paquet Machine, puis au balayage suivant les cases 3 et 6 sont examinées dans l’ordre 1 → 6."
       },
       "B": {
         "nom": "La Ruche des Mélipones",
@@ -2271,7 +2271,7 @@
       {
         "domaine": "2. Furtivité à 4 emplacements jumeaux, Silence & Gouvernance",
         "avant": "Action bilatérale sur les 2 rives ou mémoire de l’ordre d’arrivée ; décisions collectives sur les tuiles.",
-        "apres": "v5.3 : 4 emplacements par case Furtivité (2 jumeaux/rive, max 2 Défenseurs). Entrer sur la case (toute face) tire l’autre pion sur le jumeau de son bord et oriente l’unique action du binôme ; retourner de réflexion à définitif se fait strictement sur place. Silence tactique sous paravent fermé ; chaque Tuile et piste de Migration est gouvernée par son seul Peuple d’origine (Sabotages visibles par H)."
+        "apres": "v5.3 : 4 emplacements par case Furtivité (2 jumeaux/rive, max 2 Défenseurs). Entrer sur la case (toute face) tire l’autre pion sur le jumeau de son bord et oriente l’unique action du binôme ; retourner de réflexion à définitif se fait strictement sur place. Silence tactique sous paravent fermé ; chaque Tuile et piste de Migration est gouvernée par son seul Peuple d’origine. Sabotage pur : +1 carte Sabotage identique ajoutée définitivement au paquet Machine (1 carte Sabotage tirée en Étape 1 = 1 activation machine perdue)."
       },
       {
         "domaine": "3. Combat d’un seul tenant, Zéro Verrouillage, Routes & Contact Nid",
@@ -2422,7 +2422,7 @@ const SPEC_FORMELLE_V5_3 = {
         3
       ]
     },
-    "reserves_materiel": "illimitees",
+    "reserves_materiel": "illimitees (jetons et cartes Sabotage identiques)",
     "plafond_repousse_parcelle": "dotation_initiale_arbres"
   },
   "principes_transverses": {
@@ -2439,7 +2439,7 @@ const SPEC_FORMELLE_V5_3 = {
       "nom": "Distribution, Dés secrets et Pose des Défenseurs",
       "regles": [
         "Les machines déjà sur la dernière parcelle non rasée de leur rayon sont en Siège (carte posée face visible sur place, hors paquet).",
-        "S'il reste moins de cartes Machine que de joueurs (suite à un rayon entièrement rasé), distribution dans le sens horaire à partir du peuple ayant le plus d'Arbres debout ; les joueurs sans carte lancent quand même leurs 2 dés pour tenter d'ouvrir un Rêve.",
+        "Chaque joueur hors pénurie pioche secrètement 1 carte du paquet Machine (qui inclut toutes les cartes Sabotage ajoutées définitivement lors des tours précédents). Une carte Sabotage tirée n’active aucune machine (action du Contremaître perdue). S’il reste moins de cartes que de joueurs, distribution dans le sens horaire à partir du peuple ayant le plus d’Arbres debout ; tout joueur (avec Sabotage ou sans carte) lance quand même ses 2 dés pour tenter un double Rêve.",
         "Interdiction à la pose : Route Forestière, emplacement de tuile déjà construit ou plein (2 constructeurs), tuile inconstructible (Gardien sans case libre autorisée, Nid sans parcelle légale), ou rive de Furtivité donnant sur une Route Forestière lorsque l'action requiert une parcelle adjacente non rasée.",
         "Piste de Furtivité à 4 emplacements par case (2 jumeaux rive J1, 2 jumeaux rive J2 ; max 2 Défenseurs par case). Lorsqu'un Défenseur ENTRE sur une case de Furtivité (1er Défenseur, 2e en réflexion ou 2e posé directement en choix définitif), on le pose sur l'un des 4 emplacements valides et l'éventuel autre Défenseur présent glisse aussitôt sur l'emplacement jumeau du même bord (orientant l'unique action du binôme). Retourner sur place un jeton de sa face réflexion à sa face choix définitif se fait strictement sur son emplacement actuel, sans déplacement ni tirage."
       ]
@@ -2449,7 +2449,7 @@ const SPEC_FORMELLE_V5_3 = {
       "code": "REVELATION_DES_REVES_FURTIVITE",
       "nom": "Ouverture des Paravents, Rêves, Dés et Furtivité",
       "regles": [
-        "Ouverture simultanée des paravents. Fin du silence tactique ; ouverture de la fenêtre de jeu des cartes Sabotage visibles (gouvernées par les Humains, ou par leur acquéreur si les Humains sont absents).",
+        "Ouverture simultanée des paravents et fin du silence tactique. Toute carte Sabotage révélée n’a aucun autre effet que d’avoir fait perdre une activation au Contremaître : elle est mise de côté pour être remélangée dans le paquet Machine en fin de tour.",
         "Double aux dés : peut ouvrir un Rêve en piste. Hors double, le plus petit dé s'applique à la carte Machine (sauf Loi modifiant le dé retenu).",
         "Si l'emplacement désigné par le dé retenu contient un Rêve, l'activation de cette machine est annulée pour le tour et ce Rêve peut s'ouvrir. Chaque Rêve ne peut s'ouvrir qu'au maximum 1 fois par tour toutes sources confondues.",
         "Chaque binôme complet sur une case de Furtivité déclenche 1 seule action, gouvernée par le joueur de la rive où se trouvent les 2 emplacements jumeaux occupés."
@@ -2481,7 +2481,6 @@ const SPEC_FORMELLE_V5_3 = {
       "code": "ATTAQUES_ET_TEST_FIN",
       "nom": "Attaques des Machines et Vérification de Fin de Partie",
       "regles": [
-        "Fermeture de la fenêtre libre des cartes Sabotage au coup d'envoi de la 1re attaque ; toutefois, toute carte Sabotage fraîchement piochée pendant les attaques peut être jouée immédiatement au moment de sa pioche.",
         "Ordre des machines : Piste des Tactiques de 1 à 6, puis machines en Siège. Sur un même rayon au même rang (ou en Siège), l'Abatteuse agit toujours avant le Bulldozer ; entre rayons distincts au même rang, ordre libre entre les joueurs concernés.",
         "Chaque machine est résolue d'un seul tenant : lecture dynamique de ses cibles depuis sa position physique réelle à cet instant (en sautant toute Route Forestière) -> frappes -> avancée éventuelle -> gain éventuel de jeton rouge.",
         "Chaîne stricte des parades à chaque frappe : (1) Bond du Jaguar (Loi auto : 2 jetons bleus défaussés -> toutes frappes restantes de la machine parées + recul) -> (2) Piquée de la Harpie -> (3) Piège (Embuscade auto si Défense totale >= 1, locale ou soutenue à distance ; le Piège est marqué comme ayant servi) -> (4) Parade classique (Défenseurs + défausse immédiate des Insectes manquants).",
@@ -2500,7 +2499,7 @@ const SPEC_FORMELLE_V5_3 = {
         "Gain par machine : +1 par parcelle réellement endommagée (au moins 1 Arbre coupé ou 1 Souche retirée par cette machine), +1 par jeton rouge acquis en fin d'attaque, -1 par jeton bleu présent sur la machine.",
         "Réductions : application des retraits volontaires de tuiles (Voile de l'Oubli, Brume de la Dendrobate) AVANT les Insectes Bug du Cerveau (un Bug sur une case déjà à 0 jeton n'est pas défaussé et reste en place).",
         "Avancement : la Tactique strictement seule en tête avec au moins 1 jeton échange sa place avec sa voisine de gauche (y compris un Rêve, qui recule d'un cran à droite ; immobile si déjà en case 1). En cas d'égalité avec L'Écho des Voix Célestes amenant son Rêve en case 1, la fin de partie se déclenche immédiatement à la fin de ce tour (Repousse Finale).",
-        "Ménage systématique : remise en réserve de 100 % des jetons d'Apprentissage de toutes les tuiles dans tous les cas, retrait des marqueurs 'utilisé' des Gardiens et retour en main des Défenseurs."
+        "Ménage systématique : remise en réserve de 100 % des jetons d’Apprentissage de toutes les tuiles dans tous les cas, retrait des marqueurs 'utilisé' des Gardiens, retour en main des Défenseurs, et remélange du paquet Machine (hors machines en Siège) avec toutes les cartes Sabotage (révélées/écartées ce tour + nouvellement acquises ce tour)."
       ]
     }
   ],
@@ -2528,7 +2527,7 @@ const SPEC_FORMELLE_V5_3 = {
     "A21": "Anti-blocage et Nids : pose interdite sur case morte/tuile inconstructible ; 1 seul Nid par parcelle sans machine ; choix du bâtisseur libéré par Peuple d'origine.",
     "A22": "Communication muette : silence tactique sous paravent fermé ; simple visibilité publique sans concertation orale sous l'Ara.",
     "A23": "Apprentissage : dommage réel requis (>= 1 Arbre coupé ou Souche retirée) ; retraits volontaires avant Bugs ; remise à zéro intégrale en fin d'étape.",
-    "A24": "Cartes Sabotage : visibles, gouvernées par les Humains (ou acquéreur si absents), recyclées, jouables de la Révélation au début des attaques + immédiatement si piochées en attaque.",
+    "A24": "Cartes Sabotage (dilution permanente) : toutes identiques et sans effet propre (réserve illimitée). 1 Sabotage acquis ajoute définitivement 1 carte Sabotage au paquet Machine (allume 3. Sabotage) ; 1 carte Sabotage tirée à l’Étape 1 fait perdre 1 activation au Contremaître puis est remélangée en fin de tour.",
     "A25": "Séquence des attaques : Tactiques 1..6 puis Sièges ; Abatteuse avant Bulldozer sur un même rayon, libre entre rayons distincts ; machine résolue d'un seul tenant."
   }
 };

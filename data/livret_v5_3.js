@@ -3,33 +3,42 @@
 // =========================================================================
 
 const REGLES_COEUR_SYNTHESE = {
-  but_et_format: "Coopératif asymétrique à communication limitée (3 à 6 joueurs parmi M,R,O,H,E,I · max 8 tours). Objectif unique : maximiser le total d'Arbres debout après la Repousse Finale (plafonnée à la dotation initiale de chaque parcelle). Réserves de jetons illimitées.",
-  principes_transverses: {
-    gouvernance_unitaire: "Chaque Tuile de Synergie (G, R, M) et piste de Migration est gouvernée exclusivement par le joueur de son Peuple d'origine (champ origine). Cartes Sabotage visibles gouvernées par H (ou par l'acquéreur si H est absent). Zéro vote de groupe.",
-    communication_muette: "Silence tactique complet tant que les paravents sont fermés (seuls les placements/ajustements de Défenseurs communiquent). Sous l'ouverture anticipée de l'Ara : simple visibilité publique des cartes et dés, sans concertation orale.",
-    pont_routier: "Le long d'un rayon Forêt, toute Route Forestière est systématiquement sautée (viser devant, avancer, reculer, glisser un Piège, migrer = prochaine parcelle non rasée). Latéralement (Forêt <-> Furtivité), une Route est infranchissable et inoccupable.",
-    cascades_gardiens: "Finir intégralement l'action ou le Nid en cours avant d'examiner la Piste des Gardiens. Marquage 'utilisé' immédiat dès l'ouverture ; balayage à plat des cases allumées de 1 à 6 (répété tant qu'une case allumée porte un Gardien disponible). Faces 2 autonomes (seule la face visible s'applique) ; Loi passive marquée automatiquement dès que sa case s'allume."
+  "but_et_format": "Coopératif asymétrique à communication limitée (3 à 6 joueurs parmi M,R,O,H,E,I · max 8 tours). Objectif unique : maximiser le total d'Arbres debout après la Repousse Finale (plafonnée à la dotation initiale de chaque parcelle). Réserves de jetons et de cartes Sabotage illimitées.",
+  "principes_transverses": {
+    "gouvernance_unitaire": "Chaque Tuile de Synergie (G, R, M) et piste de Migration est gouvernée exclusivement par le joueur de son Peuple d'origine (champ origine). Zéro vote de groupe. Les cartes Sabotage sont toutes identiques et sans décision de jeu (dilution automatique du paquet Machine).",
+    "communication_muette": "Silence tactique complet tant que les paravents sont fermés (seuls les placements/ajustements de Défenseurs communiquent). Sous l'ouverture anticipée de l'Ara : simple visibilité publique des cartes et dés, sans concertation orale.",
+    "pont_routier": "Le long d'un rayon Forêt, toute Route Forestière est systématiquement sautée (viser devant, avancer, reculer, glisser un Piège, migrer = prochaine parcelle non rasée). Latéralement (Forêt <-> Furtivité), une Route est infranchissable et inoccupable.",
+    "cascades_gardiens": "Finir intégralement l'action ou le Nid en cours avant d'examiner la Piste des Gardiens. Marquage 'utilisé' immédiat dès l'ouverture ; balayage à plat des cases allumées de 1 à 6 (répété tant qu'une case allumée porte un Gardien disponible). Faces 2 autonomes (seule la face visible s'applique) ; Loi passive marquée automatiquement dès que sa case s'allume."
   },
-  topologie_et_seuils_imprimes: {
-    roue: "N pistes Forêt (rayons p=1 bordure vers p=P_Max cœur) alternées avec N pistes Furtivité (lisières X<->Y portant 2 Tuiles de Synergie en bordure et 4 emplacements jumeaux par case Furtivité).",
-    P4_2233: "4 parcelles : arbres initiaux et Seuils Imprimés fixes [2, 2, 3, 3] (10xN arbres).",
-    P5_22233: "5 parcelles : arbres initiaux et Seuils Imprimés fixes [2, 2, 2, 3, 3] (12xN arbres).",
-    seuil_reveil_fixe: "Calculé une fois pour toutes à la mise en place : inactif si < 3 Gardiens dans la partie ; sinon min(N, gardiensEnJeu) avec plafond 5 à 6 joueurs (minimum 3). Un Gardien renvoyé en lisière perd son marqueur."
+  "topologie_et_seuils_imprimes": {
+    "roue": "N pistes Forêt (rayons p=1 bordure vers p=P_Max cœur) alternées avec N pistes Furtivité (lisières X<->Y portant 2 Tuiles de Synergie en bordure et 4 emplacements jumeaux par case Furtivité).",
+    "P4_2233": "4 parcelles : arbres initiaux et Seuils Imprimés fixes [2, 2, 3, 3] (10xN arbres).",
+    "P5_22233": "5 parcelles : arbres initiaux et Seuils Imprimés fixes [2, 2, 2, 3, 3] (12xN arbres).",
+    "seuil_reveil_fixe": "Calculé une fois pour toutes à la mise en place : inactif si < 3 Gardiens dans la partie ; sinon min(N, gardiensEnJeu) avec plafond 5 à 6 joueurs (minimum 3). Un Gardien renvoyé en lisière perd son marqueur."
   },
-  sequence_tour_6_etapes: {
-    "1_siege_et_plan": "Machines sur la dernière parcelle non rasée = Siège irréversible (autonome même si T4 éjectée, 0 Apprentissage). Distribution 1 carte Machine/joueur hors Siège (si moins de cartes que de joueurs : sens horaire depuis le Peuple ayant le plus d'Arbres debout ; joueur sans carte lance quand même 2D6). Sous paravent : double aux dés peut ouvrir un Rêve en 3.2 ; hors double, M = min(D1,D2) s'applique à la carte Machine (modifié par Lois). Si rang M = Rêve, activation machine annulée.",
+  "sequence_tour_6_etapes": {
+    "1_siege_et_plan": "Machines sur la dernière parcelle non rasée = Siège irréversible (autonome même si T4 éjectée, 0 Apprentissage). Distribution 1 carte/joueur depuis le paquet Machine (incluant les cartes Sabotage déjà intégrées ; si moins de cartes que de joueurs : sens horaire depuis le Peuple ayant le plus d'Arbres debout ; joueur sans carte lance quand même 2D6). Sous paravent : double aux dés peut ouvrir un Rêve en 3.2. Si carte Sabotage tirée : aucune machine activée par cette carte (action du Contremaître perdue, aucune Tactique choisie). Si carte Machine tirée : hors double, M = min(D1,D2) désigne le rang sur la Piste Tactiques (modifié par Lois ; si rang M = Rêve, activation machine annulée).",
     "2_defenseurs_et_furtivite_4_slots": "Anti-blocage : pose interdite sur Route Forestière, tuile construite/pleine/inconstructible, ou rive Furtivité bordant une Route (si parcelle requise). 1er Défenseur irrévocable sur sa Forêt ou ses 2 lisières ; puis 2e Défenseur global (réflexion -> définitif). Case Furtivité = 4 emplacements (2 jumeaux rive J1, 2 jumeaux rive J2 ; max 2 Défenseurs). ENTRER sur la case (toute face) tire l'éventuel autre Défenseur sur l'emplacement jumeau du même bord ; RETOURNER de réflexion à définitif se fait strictement sur place sans déplacement.",
     "3_1_construction": "Construction obligatoire dès 2 constructeurs (ou 1 Déf + 1 Insecte avec Tamanoir). Gardien -> case libre 1..6. Rêve -> éjecte la Tactique la plus à droite, seules les tuiles à droite du trou glissent d'1 cran à gauche, pose en case 6 (Bugs fixes sur numéros). Libération d'1 bâtisseur sur 2 (N=3 ou Danse) choisie par Peuple d'origine ; si 2 libérés (N=3 + Danse), chacun choisit sa rive (limité aux Défenseurs réels). Nid -> parcelle non rasée sans machine ni autre Nid (max 1 Nid/parcelle), suivi par ses Défenseurs constructeurs.",
-    "3_2_revelation_et_sabotages": "Ouverture simultanée des paravents ; fin du silence. Fenêtre libre des cartes Sabotage visibles (pioche recyclée si vide) jusqu'au lancement de la 1re attaque en Étape 5. Double aux dés ou dé M sur un Rêve : ouvre le Rêve et l'avance r -> r-1 (max 1 ouverture/Rêve/tour en standard ; machine sur Rêve annulée).",
-    "4_1_furtivite": "Par binôme complet sur une case Furtivité (2 Défenseurs sur la même rive, ou 1 Déf + 1 Insecte défaussé) : 1 seule action gouvernée par le joueur de cette rive sur la parcelle Forêt non rasée de son bord — Piège si 0 machine présente (Déclencheur 2) OU Sabotage visible si >=1 machine présente et aucune active ce tour (Siège = active ; Déclencheur 3 si carte piochée).",
+    "3_2_revelation_et_sabotages": "Ouverture simultanée des paravents ; fin du silence. Toute carte Sabotage révélée est simplement mise de côté (action du Contremaître perdue ce tour) pour être remélangée dans le paquet en 6.3. Double aux dés ou dé M sur un Rêve : ouvre le Rêve et l'avance r -> r-1 (max 1 ouverture/Rêve/tour en standard ; machine sur Rêve annulée).",
+    "4_1_furtivite": "Par binôme complet sur une case Furtivité (2 Défenseurs sur la même rive, ou 1 Déf + 1 Insecte défaussé) : 1 seule action gouvernée par le joueur de cette rive sur la parcelle Forêt non rasée de son bord — Piège si 0 machine présente (Déclencheur 2) OU Sabotage si >=1 machine présente et aucune active ce tour (Siège = active) : prenez 1 carte Sabotage de la réserve et mettez-la de côté pour l'intégrer définitivement au paquet Machine en 6.3 (allume Déclencheur 3).",
     "4_2_nids": "Chaque Nid avec >=1 Défenseur est un bloc indivisible : (1) +1 Insecte (si 0-1 présent à cet instant) ou +2 (si >=2 présents à cet instant, y compris Cazadores), puis (2) pouvoir propre du Nid, puis (3) balayage Gardiens 1..6 (Déclencheur 6). Miel des Ancêtres hors phase = jetons Insecte seuls.",
     "4_3_migration": "Chaque Insecte sur la roue peut bouger de 0 ou 1 cran (retourner le pion déplacé pour suivi, remettre à l'endroit en fin de 4.3). Depuis la dernière parcelle non rasée, aller simple définitif sans limite vers une case 1..6 de Bug du Cerveau ou Colonisation des Gardiens.",
-    "5_attaques_sans_verrouillage": "Zéro dette d'Insectes et zéro verrouillage des parcelles (seul un Piège déjà déclenché ce tour ne peut plus payer de coût volontaire). Sabotage pioché en attaque jouable immédiatement. Ordre : Tactiques 1..6 puis Sièges (Abatteuse avant Bulldozer sur un même rayon ; libre entre rayons distincts). Chaque machine résolue d'un seul tenant : cibles lues depuis sa position réelle à l'instant de l'attaque -> chaîne parades [1° Jaguar (2 bleus) -> 2° Harpie -> 3° Piège si Déf totale >= 1 -> 4° Parade classique avec défausse immédiate des Insectes manquants] -> dégâts (Abatteuse 2 Arbres ; Bulldozer 1 Arbre + toutes Souches, si 0/0 Route Forestière et repli machines vers bordure par défaut) -> avancée T3/T6 -> +1 Rouge T4/T5/T6 -> Siège si dernière parcelle. Contact Machine-Nid (tout mouvement entrant) : Nid renvoyé en lisière reconstructible + tous Insectes de la parcelle défaussés. Fin 5.3 : effets fin d'attaques, retrait Pièges déclenchés, puis test Fin de Partie (Tour 8, Rêve rang 1, ou marqueurs Gardiens >= seuil fixe -> Repousse Finale directe sans Étape 6).",
-    "6_apprentissage": "Machines activées par carte uniquement (Siège = 0) : +1/parcelle réellement endommagée (>=1 Arbre coupé ou Souche retirée) +1/Rouge acquis -1/Bleu présent (plancher 0/machine). Retraits tuiles volontaires AVANT Insectes Bug (Bug économisé si déjà 0). Tactique strictement seule en tête avec >=1 jeton échange à gauche (si Écho des Voix Célestes amène son Rêve en case 1 -> Repousse Finale fin de tour). Remise à zéro de 100 % des jetons Apprentissage dans tous les cas, raz marqueurs Gardiens et retour Défenseurs."
+    "5_attaques_sans_verrouillage": "Zéro dette d'Insectes et zéro verrouillage des parcelles (seul un Piège déjà déclenché ce tour ne peut plus payer de coût volontaire). Ordre : Tactiques 1..6 puis Sièges (Abatteuse avant Bulldozer sur un même rayon ; libre entre rayons distincts). Chaque machine résolue d'un seul tenant : cibles lues depuis sa position réelle à l'instant de l'attaque -> chaîne parades [1° Jaguar (2 bleus) -> 2° Harpie -> 3° Piège si Déf totale >= 1 -> 4° Parade classique avec défausse immédiate des Insectes manquants] -> dégâts (Abatteuse 2 Arbres ; Bulldozer 1 Arbre + toutes Souches, si 0/0 Route Forestière et repli machines vers bordure par défaut) -> avancée T3/T6 -> +1 Rouge T4/T5/T6 -> Siège si dernière parcelle. Contact Machine-Nid (tout mouvement entrant) : Nid renvoyé en lisière reconstructible + tous Insectes de la parcelle défaussés. Fin 5.3 : effets fin d'attaques, retrait Pièges déclenchés, puis test Fin de Partie (Tour 8, Rêve rang 1, ou marqueurs Gardiens >= seuil fixe -> Repousse Finale directe sans Étape 6).",
+    "6_apprentissage": "Machines activées par carte uniquement (Siège = 0) : +1/parcelle réellement endommagée (>=1 Arbre coupé ou Souche retirée) +1/Rouge acquis -1/Bleu présent (plancher 0/machine). Retraits tuiles volontaires AVANT Insectes Bug (Bug économisé si déjà 0). Tactique strictement seule en tête avec >=1 jeton échange à gauche (si Écho des Voix Célestes amène son Rêve en case 1 -> Repousse Finale fin de tour). Remise à zéro de 100 % des jetons Apprentissage dans tous les cas, raz marqueurs Gardiens, retour Défenseurs, et remélange du paquet Machine (hors Siège) avec TOUTES les cartes Sabotage (révélées ce tour + nouvellement acquises)."
   },
-  supports_et_grammaire: {
-    declencheurs_gardiens_6: "1: Parade, 2: Piégeage, 3: Sabotage, 4: Gardien (Résonance), 5: Rêve, 6: Insecte.",
-    primitives_8: ["MOD_SEUIL", "CREATION_ENTITE", "DEPLACEMENT", "MOD_PUISSANCE", "MOD_APPRENTISSAGE", "PERMUTATION_PISTE", "PARTAGE_INFO_ETAT_GARDIEN", "MOD_LOI_DU_COEUR"]
+  "supports_et_grammaire": {
+    "declencheurs_gardiens_6": "1: Parade, 2: Piégeage, 3: Sabotage, 4: Gardien (Résonance), 5: Rêve, 6: Insecte.",
+    "primitives_8": [
+      "MOD_SEUIL",
+      "CREATION_ENTITE",
+      "DEPLACEMENT",
+      "MOD_PUISSANCE",
+      "MOD_APPRENTISSAGE",
+      "PERMUTATION_PISTE",
+      "PARTAGE_INFO_ETAT_GARDIEN",
+      "MOD_LOI_DU_COEUR"
+    ]
   }
 };
 
@@ -45,7 +54,6 @@ function renderDidacticRulebook() {
   const reveilActif = gardiensDispoCount >= 3;
   const seuilReveil = reveilActif ? Math.min(n === 6 ? 5 : n, gardiensDispoCount) : null;
   const hasR6C = activeTileIds.includes('R6') && state.profileOverrides['R6'] === 'C';
-  const hasHumains = state.peuplesCercle.includes('H');
 
   const container = document.getElementById('rulebook-article');
   container.innerHTML = `
@@ -101,7 +109,7 @@ function renderDidacticRulebook() {
         Sur chaque parcelle où leur frappe n'est pas parée, les <strong>Abatteuses</strong> coupent jusqu'à <strong>2 Arbres debout</strong> en Souches, et les <strong>Bulldozers</strong> coupent jusqu'à <strong>1 Arbre debout</strong> en Souche puis retirent toutes les Souches non protégées. Une parcelle sans Arbre ni Souche devient une <strong>Route Forestière</strong> définitivement rasée : pour le reste de la partie, elle est <strong>systématiquement sautée le long d'un rayon</strong> (viser devant, avancer, reculer, glisser un Piège ou migrer désignent toujours la <em>prochaine parcelle non rasée</em>), mais reste <strong>infranchissable et inoccupable latéralement</strong> depuis les lisières.
       </p>
       <p class="mb-4 text-sm">
-        <strong>Silence sous paravent & Autorité unitaire :</strong> Du tirage des cartes et dés jusqu'à l'ouverture simultanée des paravents (Étape 3.2), <strong>toute communication tactique (parole, signe ou allusion) est interdite</strong> : seuls les placements et ajustements de vos Défenseurs expriment vos intentions <em>(même si Le Cri d'Alarme de l'Ara ouvre les paravents par anticipation, cela n'apporte qu'une visibilité publique sans concertation orale)</em>. Une fois les paravents ouverts, chaque Tuile de Synergie et piste de Migration est gouvernée par le seul joueur de son <strong>Peuple d'origine</strong> ; les cartes <strong>Sabotage</strong> visibles sont gouvernées par <span class="dyn-span">${hasHumains ? 'le joueur des <strong>Humains</strong>' : 'le joueur qui vient d’acquérir la carte (les Humains étant absents de cette table)'}</span>.
+        <strong>Silence sous paravent & Autorité unitaire :</strong> Du tirage des cartes et dés jusqu'à l'ouverture simultanée des paravents (Étape 3.2), <strong>toute communication tactique (parole, signe ou allusion) est interdite</strong> : seuls les placements et ajustements de vos Défenseurs expriment vos intentions <em>(même si Le Cri d'Alarme de l'Ara ouvre les paravents par anticipation, cela n'apporte qu'une visibilité publique sans concertation orale)</em>. Une fois les paravents ouverts, chaque Tuile de Synergie et piste de Migration est gouvernée exclusivement par le joueur de son <strong>Peuple d'origine</strong> (zéro vote de groupe).
       </p>
 
       <div class="bg-forest-50 border-l-4 border-forest-700 p-4 rounded-r-xl">
@@ -132,7 +140,7 @@ function renderDidacticRulebook() {
           <strong><span class="dyn-span">${n} pistes Furtivité intercalées</span> (lisières X↔Y) :</strong> chaque case Furtivité comporte <strong>4 emplacements marqués</strong> : <strong>2 emplacements jumeaux</strong> sur le bord du joueur gauche et <strong>2 emplacements jumeaux</strong> sur le bord du joueur droit (maximum 2 Défenseurs par case). En bordure extérieure de chaque lisière figurent 2 emplacements de Tuiles de Synergie.
         </li>
         <li>
-          <strong>Paquets & Piste des Tactiques :</strong> formez d'une part le paquet mélangé des <span class="dyn-span">${2 * n} cartes Machine</span>, et d'autre part la pioche séparée des cartes <strong>Sabotage</strong> (avec sa défausse, remélangée dès que la pioche s'épuise). <span class="dyn-span">${c.Mise_En_Place_Tactiques === 'ORDRE_FIXE_T1_T6' ? 'Alignez les 6 tuiles Tactique face visible dans l’ordre croissant <code>T1</code> à <code>T6</code> des Rangs 1 à 6.' : 'Mélangez aléatoirement les 6 tuiles Tactique <code>T1</code> à <code>T6</code> des Rangs 1 à 6.'}</span>
+          <strong>Paquet des Machines & Réserve de Sabotage :</strong> formez le paquet mélangé initial des <span class="dyn-span">${2 * n} cartes Machine</span>, et placez à proximité la réserve de cartes <strong>Sabotage</strong> (toutes identiques, réserve illimitée : chaque Sabotage réussi ajoutera définitivement 1 carte Sabotage dans le paquet Machine pour lui faire perdre des activations). <span class="dyn-span">${c.Mise_En_Place_Tactiques === 'ORDRE_FIXE_T1_T6' ? 'Alignez les 6 tuiles Tactique face visible dans l’ordre croissant <code>T1</code> à <code>T6</code> des Rangs 1 à 6.' : 'Mélangez aléatoirement les 6 tuiles Tactique <code>T1</code> à <code>T6</code> des Rangs 1 à 6.'}</span>
         </li>
         <li>
           <strong>Matériel individuel :</strong> 1 Mini-Paravent, 2 dés (2D6), le <em>Premier Défenseur</em> (face définitive) et le <em>Deuxième Défenseur</em> (double-face : <em>« en réflexion »</em> / <em>« définitive »</em>).
@@ -200,13 +208,14 @@ function renderDidacticRulebook() {
             <strong>Machines en Siège autonome :</strong> Toute machine déjà située sur la <strong>dernière parcelle non rasée de son rayon</strong> est en <strong>Siège</strong> irréversible (carte posée face visible sur sa parcelle). Elle agit de façon autonome en fin d'Étape 5 selon le profil de Siège (frappe sur place, modificateur <code>-1</code>, <code>+1 Rouge</code>), <strong>même si la tuile <code>T4</code> a été éjectée de la piste</strong>, et ne génère jamais d'Apprentissage.
           </li>
           <li>
-            <strong>Distribution secrète :</strong> Distribuez 1 carte Machine face cachée à chaque joueur depuis le paquet restant, puis écartez le surplus sans le regarder. <em>(S'il reste moins de cartes que de joueurs, servez dans le sens horaire à partir du Peuple ayant le plus d'Arbres debout ; un joueur sans carte lance quand même ses 2 dés pour tenter un double Rêve).</em>
+            <strong>Distribution secrète (Paquet Machine + Sabotages intégrés) :</strong> Distribuez 1 carte face cachée à chaque joueur depuis le paquet (qui contient les cartes Machine hors Siège ainsi que toutes les cartes Sabotage déjà ajoutées lors des tours précédents), puis écartez le surplus sans le consulter. <em>(S'il reste moins de cartes que de joueurs, servez dans le sens horaire à partir du Peuple ayant le plus d'Arbres debout ; un joueur sans carte lance quand même ses 2 dés pour tenter un double Rêve).</em>
           </li>
           <li>
             <strong>Lancer de 2D6 sous le mini-paravent (en silence complet) :</strong>
             <ul class="list-disc list-inside ml-5 mt-1 space-y-1 text-slate-700">
-              <li><strong>Double aux dés :</strong> permettra en 3.2 d'ouvrir un Rêve présent sur la piste.</li>
-              <li><strong>Lecture pour la carte Machine :</strong> hors double (ou pour votre machine), le plus petit dé <code>M = min(D1, D2)</code> désigne le rang sur la Piste des Tactiques (sauf Loi modifiant le dé retenu). Si ce rang contient un <strong>Rêve</strong>, l'activation de votre machine sera annulée en 3.2 !</li>
+              <li><strong>Double aux dés :</strong> permettra en 3.2 d'ouvrir un Rêve présent sur la piste (même si vous avez pioché une carte Sabotage ou reçu aucune carte).</li>
+              <li><strong>Si vous avez pioché une carte Sabotage :</strong> bonne nouvelle secrète, <strong>cette action du Contremaître est perdue</strong> (aucune machine n'est activée par cette carte ; ne sélectionnez aucune Tactique sous votre paravent).</li>
+              <li><strong>Si vous avez pioché une carte Machine :</strong> le plus petit dé <code>M = min(D1, D2)</code> désigne le rang sur la Piste des Tactiques (sauf Loi modifiant le dé retenu). Si ce rang contient un <strong>Rêve</strong>, l'activation de votre machine sera annulée en 3.2 !</li>
             </ul>
           </li>
         </ol>
@@ -295,9 +304,9 @@ function renderDidacticRulebook() {
             </ul>
           </li>
           <li>
-            <strong>3.2. Ouverture simultanée des paravents, Rêves & Fenêtre Sabotage :</strong>
+            <strong>3.2. Ouverture simultanée des paravents, Pannes de Sabotage & Rêves :</strong>
             <ul class="list-disc list-inside ml-5 mt-1 text-slate-700 space-y-1">
-              <li><strong>Fin du silence & Cartes Sabotage :</strong> dès maintenant et <strong>jusqu'au lancement de la 1<sup>re</sup> attaque en Étape 5</strong>, les cartes Sabotage visibles en réserve peuvent être jouées librement par leur gouverneur.</li>
+              <li><strong>Fin du silence & Cartes Sabotage révélées :</strong> toute carte <strong>Sabotage</strong> révélée derrière un paravent fait simplement perdre une activation au Contremaître ce tour-ci ! Mettez-la de côté près du paquet Machine : elle y sera remélangée en 6.3.</li>
               <li><strong>Rêves (double aux dés ou dé M sur un Rêve) :</strong> si le dé <code>M</code> d'une carte Machine désigne un Rêve, <strong>l'activation de cette machine est annulée</strong> pour le tour. <span class="dyn-span">${c.Regle_Ouverture_Reve_Multiple === 'UNIQUE_PAR_TOUR' ? 'Chaque Rêve sollicité (par un double ou par au moins un dé M) peut s’ouvrir et avancer d’1 cran vers la gauche (<code>r → r−1</code>) <strong>au maximum 1 fois ce tour-ci</strong>.' : 'Chaque sollicitation ouvre le Rêve désigné et le fait avancer d’1 cran vers la gauche (<strong>mode cumulatif</strong>).'}</span></li>
             </ul>
           </li>
@@ -314,7 +323,7 @@ function renderDidacticRulebook() {
             <strong>4.1. Actions des binômes en Furtivité :</strong> Sur chaque case Furtivité réunissant un binôme (2 Défenseurs alignés sur les jumeaux d'une même rive, ou <code>1 Défenseur + 1 Insecte</code> défaussé), le joueur de <strong>cette rive</strong> résout <strong>1 seule action sur la parcelle Forêt non rasée de son bord</strong> :
             <ul class="list-disc list-inside ml-5 mt-1 text-slate-700 space-y-0.5">
               <li><strong>Préparer un Piège :</strong> s'il n'y a <strong>aucune machine physiquement présente</strong> sur cette parcelle (même ciblée à distance), posez-y 1 jeton Piège (max 1/parcelle ; allume <em>2. Piégeage</em>).</li>
-              <li><strong>Saboter le chantier :</strong> s'il y a <strong>au moins 1 machine présente mais aucune active ce tour-ci</strong> (une machine en Siège est active), piochez 1 carte Sabotage face visible en réserve (allume <em>3. Sabotage</em> si une carte est effectivement piochée).</li>
+              <li><strong>Saboter le chantier :</strong> s'il y a <strong>au moins 1 machine présente mais aucune active ce tour-ci</strong> (une machine en Siège est active), prenez <strong>1 carte Sabotage</strong> de la réserve et mettez-la de côté pour l'intégrer <strong>définitivement</strong> au paquet Machine en 6.3 (allume <em>3. Sabotage</em>).</li>
             </ul>
           </li>
           <li>
@@ -336,7 +345,7 @@ function renderDidacticRulebook() {
           Étape 5 : Attaques des Machines (d’un seul tenant) & Test de Fin de Partie
         </h3>
         <p class="text-xs text-slate-600 mb-2">
-          <em>La fenêtre libre des cartes Sabotage se ferme au coup d'envoi de la 1<sup>re</sup> attaque — toutefois, toute carte Sabotage fraîchement piochée pendant les attaques peut être jouée sur-le-champ ! Il n'existe aucun verrouillage des parcelles ciblées : seul un Piège ayant déjà paré ce tour-ci ne peut plus payer de coût volontaire avant son retrait en 5.3.</em>
+          <em>Rappel : il n'existe aucune dette d'Insectes ni aucun verrouillage des parcelles ciblées — tant qu'un Insecte est sur le plateau, il est libre ; seul un Piège ayant déjà paré ce tour-ci ne peut plus payer de coût volontaire avant son retrait en 5.3.</em>
         </p>
 
         <div class="bg-slate-900 text-emerald-300 font-mono text-xs p-3 rounded-xl mb-3 text-center">
@@ -375,7 +384,7 @@ function renderDidacticRulebook() {
             <strong>6.2. Avancée & Remise à zéro totale :</strong> La Tactique <strong>strictement seule en tête avec au moins 1 jeton</strong> échange sa place avec sa voisine de gauche (<code>r → r−1</code>, y compris un Rêve qui recule alors à droite ; immobile au Rang 1). <strong>Dans 100 % des cas</strong> (avancée, égalité ou blocage), remettez en réserve <strong>tous les jetons Apprentissage de toutes les tuiles</strong>.
           </li>
           <li>
-            <strong>6.3. Ménage :</strong> Récupérez vos Défenseurs, retirez les marqueurs <em>« utilisé »</em> des Gardiens, et remélangez le paquet des cartes Machine (hors machines en Siège). Les cartes Sabotage non jouées restent visibles en réserve.
+            <strong>6.3. Ménage & Dilution permanente :</strong> Récupérez vos Défenseurs, retirez les marqueurs <em>« utilisé »</em> des Gardiens, et formez le paquet du tour suivant en remélangeant toutes les cartes Machine (hors machines en Siège) <strong>avec toutes les cartes Sabotage</strong> (celles révélées ou écartées ce tour-ci + toutes les nouvelles cartes Sabotage acquises ce tour-ci).
           </li>
         </ol>
       </div>
